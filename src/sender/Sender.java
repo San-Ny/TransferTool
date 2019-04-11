@@ -1,11 +1,11 @@
 package sender;
 
-import pojos.EncriptionUtil;
+import pojos.TransferToolPKey;
+import utils.ByteSerializer;
+import utils.EncriptionUtil;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.ServerSocket;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -37,7 +37,7 @@ public class Sender {
         if (args.length < 2 || args.length > 4) System.exit(-1);
 
         String host = "";
-        String port = "9555";
+        String port = "9557";
 
         for (int a = 0; a < args.length; a++){
             if (args[a].equals("-R")) host = args[a + 1];
@@ -77,12 +77,34 @@ public class Sender {
             System.exit(-1);
         }
 
-        try(ServerSocket serverSocket = new ServerSocket(Integer.parseInt(port))){
-            while(true){
-                Socket newSocket = serverSocket.accept();
-                SendService sendService = new SendService(newSocket, privateKey, publicKey);
-                sendService.start();
+        try(Socket senderSocket = new Socket()){
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(host,Integer.parseInt(port));
+            senderSocket.connect(inetSocketAddress);
+
+            //starting writer and reader
+            BufferedInputStream reader = new BufferedInputStream(senderSocket.getInputStream());
+            BufferedOutputStream writer = new BufferedOutputStream(senderSocket.getOutputStream());
+
+            //get senderPKey bits
+            byte[] senderPKey = ByteSerializer.serializeObject(new TransferToolPKey(publicKey));
+
+            //send sernder key to other pc
+            writer.write(senderPKey);
+            writer.flush();
+
+            byte[] listenerPKeyBits = new byte[senderPKey.length];
+            int result = reader.read(listenerPKeyBits);
+
+            //transform the bits to object
+            try{
+                TransferToolPKey listenerPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(listenerPKeyBits);
+            }catch (ClassNotFoundException e){
+                System.err.println("class not found");
             }
+
+            System.out.println("Handshake done, encrypted connection from now on");
+
+
         }catch (IOException e){
             System.err.println(e.getMessage());
         }
