@@ -1,16 +1,17 @@
 package pojos;
 
-import java.security.PublicKey;
+import java.io.Serializable;
+import java.security.interfaces.RSAPublicKey;
 
-public class TransferToolPKey {
+public class TransferToolPKey implements Serializable {
 
-    private final PublicKey publicKey;
+    private final RSAPublicKey publicKey;
 
-    public TransferToolPKey(PublicKey publicKey) {
+    public TransferToolPKey(RSAPublicKey publicKey) {
         this.publicKey = publicKey;
     }
 
-    public PublicKey getPublicKey() {
+    public RSAPublicKey getPublicKey() {
         return publicKey;
     }
 }

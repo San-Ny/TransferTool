@@ -1,30 +1,14 @@
-package listener;
+package tests;
 
 import utils.EncriptionUtil;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-public class Listener {
+public class TestEncriptionUtil {
     public static void main(String[] args) {
-        //-p port
-        //-v verbose connection, listener will be asked where to put the files
-        //-r recursive, will add recursively the files
-
-        if (args.length > 3) System.err.println("Unexpected arguments");
-
-        String port = "9555";
-
-        for (int a = 0; a < args.length; a++) if (args[a].equals("-p")) port = args[a + 1];
-
-        //certificates
 
         RSAPublicKey publicKey = null;
         RSAPrivateKey privateKey = null;
@@ -48,14 +32,9 @@ public class Listener {
             System.exit(-1);
         }
 
-        try(ServerSocket serverSocket = new ServerSocket(Integer.parseInt(port))){
-            while(true){
-                Socket newSocket = serverSocket.accept();
-                ListenService listenService = new ListenService(newSocket, privateKey, publicKey);
-                listenService.start();
-            }
-        }catch (IOException e){
-            System.err.println(e.getMessage());
-        }
+        byte[] encripted = EncriptionUtil.encrypt("cactus",publicKey);
+
+        System.out.println(EncriptionUtil.decrypt(encripted, privateKey));
+
     }
 }

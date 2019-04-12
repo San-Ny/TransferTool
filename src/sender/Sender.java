@@ -3,12 +3,15 @@ package sender;
 import pojos.TransferToolPKey;
 import utils.ByteSerializer;
 import utils.EncriptionUtil;
+import utils.ScannerUtil;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  * TransferTool
@@ -37,7 +40,7 @@ public class Sender {
         if (args.length < 2 || args.length > 4) System.exit(-1);
 
         String host = "";
-        String port = "9557";
+        String port = "9555";
 
         for (int a = 0; a < args.length; a++){
             if (args[a].equals("-R")) host = args[a + 1];
@@ -55,8 +58,8 @@ public class Sender {
 
         //certificates
 
-        PublicKey publicKey = null;
-        PrivateKey privateKey = null;
+        RSAPublicKey publicKey = null;
+        RSAPrivateKey privateKey = null;
         try{
             // generates the keys if not eists
             if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
@@ -66,11 +69,11 @@ public class Sender {
 
             // gets the public key
             inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
-            publicKey = (PublicKey) inputStream.readObject();
+            publicKey = (RSAPublicKey) inputStream.readObject();
 
             // gets the private key
             inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
-            privateKey = (PrivateKey) inputStream.readObject();
+            privateKey = (RSAPrivateKey) inputStream.readObject();
 
         }catch (Exception e){
             System.err.println("Certificates error");
@@ -88,7 +91,8 @@ public class Sender {
             //get senderPKey bits
             byte[] senderPKey = ByteSerializer.serializeObject(new TransferToolPKey(publicKey));
 
-            //send sernder key to other pc
+
+            //send sender key to other pc
             writer.write(senderPKey);
             writer.flush();
 
@@ -96,14 +100,20 @@ public class Sender {
             int result = reader.read(listenerPKeyBits);
 
             //transform the bits to object
+            TransferToolPKey listenerPKey = null;
             try{
-                TransferToolPKey listenerPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(listenerPKeyBits);
+                listenerPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(listenerPKeyBits);
             }catch (ClassNotFoundException e){
                 System.err.println("class not found");
+                System.exit(-1);
             }
 
-            System.out.println("Handshake done, encrypted connection from now on");
+            System.out.println("connected");
 
+            byte[] message = new byte[100];
+            reader.read(message);
+            String decriptedMsg = EncriptionUtil.decrypt(message,privateKey);
+            System.out.println(decriptedMsg);
 
         }catch (IOException e){
             System.err.println(e.getMessage());

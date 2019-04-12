@@ -6,16 +6,16 @@ import utils.EncriptionUtil;
 
 import java.io.*;
 import java.net.Socket;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 public class ListenService extends Thread {
 
     private Socket socket;
-    private PrivateKey privateKey;
-    private PublicKey publicKey;
+    private RSAPrivateKey privateKey;
+    private RSAPublicKey publicKey;
 
-    public ListenService(Socket socket, PrivateKey privateKey, PublicKey publicKey) {
+    public ListenService(Socket socket, RSAPrivateKey privateKey, RSAPublicKey publicKey) {
         this.socket = socket;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
@@ -30,8 +30,8 @@ public class ListenService extends Thread {
             BufferedOutputStream writer = new BufferedOutputStream(socket.getOutputStream());
 
             //get the sender key
-            byte[] senderPKeyBits = new byte[5000];
-            int result = reader.read(senderPKeyBits);
+            byte[] senderPKeyBits = new byte[1000];
+            reader.read(senderPKeyBits);
 
             //transform the bits to object
             TransferToolPKey senderPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(senderPKeyBits);
@@ -43,7 +43,7 @@ public class ListenService extends Thread {
             writer.write(ByteSerializer.serializeObject(listenerPKey));
             writer.flush();
 
-            System.out.println("Handshake done, encrypted connection from now on");
+
 
         }catch (Exception e){
             System.err.println("transaction successfully failed");

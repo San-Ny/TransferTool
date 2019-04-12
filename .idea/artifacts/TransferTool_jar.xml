@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TransferTool:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/TransferTool_jar</output-path>
+    <root id="archive" name="TransferTool.jar">
+      <element id="module-output" name="TransferTool" />
+    </root>
+  </artifact>
+</component>

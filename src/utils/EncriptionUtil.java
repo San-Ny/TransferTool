@@ -1,8 +1,12 @@
 package utils;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.spec.MGF1ParameterSpec;
 
 /**
  * @author JavaDigest
@@ -13,7 +17,9 @@ public class EncriptionUtil {
      * String to hold name of the encryption algorithm.
      * keys can be stored in software, create a static final variable for PublicKey and PrivateKey (instead of String) and use it.
      */
-    public static final String ALGORITHM = "RSA"; //RSA/ECB/PKCS1PADDING <==> algoritm/mode/padding
+    public static final String ALGORITHMKEYPARGENERATOR = "RSA";
+    public static final String ALGORITHMENCRIPTOR = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    public static final String ALGORITHMDECRIPTOR = "RSA/ECB/OAEPPadding";
 
     /**
      * String to hold the name of the private key file.
@@ -35,8 +41,8 @@ public class EncriptionUtil {
      */
     public static void generateKey() {
         try {
-            final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM);
-            keyGen.initialize(1024);
+            final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHMKEYPARGENERATOR);
+            keyGen.initialize(2048); //2048 - 1024
             final KeyPair key = keyGen.generateKeyPair();
 
             File privateKeyFile = new File(PRIVATE_KEY_FILE);
@@ -94,11 +100,17 @@ public class EncriptionUtil {
     public static byte[] encrypt(String text, PublicKey key) {
         byte[] cipherText = null;
         try {
-            // get an RSA cipher object and print the provider
-            final Cipher cipher = Cipher.getInstance(ALGORITHM);
-            // encrypt the plain text using the public key
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            cipherText = cipher.doFinal(text.getBytes());
+//            // get an RSA cipher object and print the provider
+//            final Cipher cipher = Cipher.getInstance(ALGORITHMENCRIPTOR);
+//            // encrypt the plain text using the public key
+//            cipher.init(Cipher.ENCRYPT_MODE, key);
+//            cipherText = cipher.doFinal(text.getBytes());
+
+
+            Cipher oaepFromAlgo = Cipher.getInstance(ALGORITHMENCRIPTOR);
+            oaepFromAlgo.init(Cipher.ENCRYPT_MODE, key);
+            return oaepFromAlgo.doFinal(text.getBytes(StandardCharsets.UTF_8));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,12 +130,19 @@ public class EncriptionUtil {
     public static String decrypt(byte[] text, PrivateKey key) {
         byte[] dectyptedText = null;
         try {
-            // get an RSA cipher object and print the provider
-            final Cipher cipher = Cipher.getInstance(ALGORITHM);
+//            // get an RSA cipher object and print the provider
+//            final Cipher cipher = Cipher.getInstance(ALGORITHMDECRIPTOR);
+//
+//            // decrypt the text using the private key
+//            cipher.init(Cipher.DECRYPT_MODE, key);
+//            dectyptedText = cipher.doFinal(text);
 
-            // decrypt the text using the private key
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            dectyptedText = cipher.doFinal(text);
+
+            Cipher oaepFromInit = Cipher.getInstance(ALGORITHMDECRIPTOR);
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-1"), PSource.PSpecified.DEFAULT);
+            oaepFromInit.init(Cipher.DECRYPT_MODE, key, oaepParams);
+            byte[] pt = oaepFromInit.doFinal(text);
+            return new String(pt, StandardCharsets.UTF_8);
 
         } catch (Exception ex) {
             ex.printStackTrace();
