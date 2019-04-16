@@ -98,23 +98,14 @@ public class EncriptionUtil {
      * @throws java.lang.Exception
      */
     public static byte[] encrypt(String text, PublicKey key) {
-        byte[] cipherText = null;
         try {
-//            // get an RSA cipher object and print the provider
-//            final Cipher cipher = Cipher.getInstance(ALGORITHMENCRIPTOR);
-//            // encrypt the plain text using the public key
-//            cipher.init(Cipher.ENCRYPT_MODE, key);
-//            cipherText = cipher.doFinal(text.getBytes());
-
-
-            Cipher oaepFromAlgo = Cipher.getInstance(ALGORITHMENCRIPTOR);
-            oaepFromAlgo.init(Cipher.ENCRYPT_MODE, key);
-            return oaepFromAlgo.doFinal(text.getBytes(StandardCharsets.UTF_8));
-
+            Cipher cipher = Cipher.getInstance(ALGORITHMENCRIPTOR);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return cipherText;
+        return null;
     }
 
     /**
@@ -128,26 +119,16 @@ public class EncriptionUtil {
      * @throws java.lang.Exception
      */
     public static String decrypt(byte[] text, PrivateKey key) {
-        byte[] dectyptedText = null;
         try {
-//            // get an RSA cipher object and print the provider
-//            final Cipher cipher = Cipher.getInstance(ALGORITHMDECRIPTOR);
-//
-//            // decrypt the text using the private key
-//            cipher.init(Cipher.DECRYPT_MODE, key);
-//            dectyptedText = cipher.doFinal(text);
-
-
-            Cipher oaepFromInit = Cipher.getInstance(ALGORITHMDECRIPTOR);
+            Cipher cipher = Cipher.getInstance(ALGORITHMDECRIPTOR);
             OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-1"), PSource.PSpecified.DEFAULT);
-            oaepFromInit.init(Cipher.DECRYPT_MODE, key, oaepParams);
-            byte[] pt = oaepFromInit.doFinal(text);
+            cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
+            byte[] pt = cipher.doFinal(text);
             return new String(pt, StandardCharsets.UTF_8);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        return new String(dectyptedText);
+        return null;
     }
 }

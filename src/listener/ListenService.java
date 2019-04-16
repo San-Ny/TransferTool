@@ -43,6 +43,11 @@ public class ListenService extends Thread {
             writer.write(ByteSerializer.serializeObject(listenerPKey));
             writer.flush();
 
+            System.out.println("keys shared");
+            System.out.println("sender key = " + senderPKey.getPublicKey().getPublicExponent());
+
+
+
 
 
         }catch (Exception e){

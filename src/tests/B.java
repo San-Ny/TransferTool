@@ -1,16 +1,16 @@
 package tests;
 
+import pojos.FolderClass;
 import pojos.TransferToolPKey;
 import utils.ByteSerializer;
 import utils.EncriptionUtil;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -56,23 +56,32 @@ public class B extends Thread{
             BufferedInputStream reader = new BufferedInputStream(senderSocket.getInputStream());
             BufferedOutputStream writer = new BufferedOutputStream(senderSocket.getOutputStream());
 
-            writer.write("buenas, entrando en tunel".getBytes());
+            //get senderPKey bits
+            byte[] senderPKey = ByteSerializer.serializeObject(new TransferToolPKey(pubkey));
+
+
+            //send sender key to other pc
+            writer.write(senderPKey);
             writer.flush();
 
-            byte[] data = new byte[50];
-            reader.read(data);
+            byte[] listenerPKeyBits = new byte[senderPKey.length];
+            int result = reader.read(listenerPKeyBits);
 
-            System.out.println("B -> " + new String(data));
+            //transform the bits to object
+            TransferToolPKey listenerPKey = null;
+            try{
+                listenerPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(listenerPKeyBits);
+            }catch (ClassNotFoundException e){
+                System.err.println("class not found");
+                System.exit(-1);
+            }
 
-            //send publicKey
-            ObjectOutputStream outO = new ObjectOutputStream(senderSocket.getOutputStream());
-            outO.writeObject(pubkey);
-            outO.flush();
+            System.out.println("B pubkey -->:\n " + pubkey);
+            System.out.println("B 'A' pubkey -->:\n" + listenerPKey.getPublicKey());
 
-            reader.read(data);
-            System.out.println(decrypt(data, privkey));
 
-            System.out.println("B -> connected");
+
+
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -92,6 +101,29 @@ public class B extends Thread{
         }
 
         return new String(dectyptedText);
+    }
+
+    private Cipher getCipherDecryptor(PrivateKey key){
+        try {
+            Cipher oaepFromInit = Cipher.getInstance("RSA/ECB/OAEPPadding");
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-1"), PSource.PSpecified.DEFAULT);
+            oaepFromInit.init(Cipher.DECRYPT_MODE, key, oaepParams);
+            return oaepFromInit;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    private Cipher getCipherEncryptor(PublicKey key){
+        try {
+            Cipher oaepFromAlgo = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+            oaepFromAlgo.init(Cipher.ENCRYPT_MODE, key);
+            return oaepFromAlgo;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
