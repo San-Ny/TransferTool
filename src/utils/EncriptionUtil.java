@@ -24,12 +24,12 @@ public class EncriptionUtil {
     /**
      * String to hold the name of the private key file.
      */
-    public static final String PRIVATE_KEY_FILE = "/etc/transfertool/private.key";
+    public static final String PRIVATE_KEY_FILE = "/etc/transfertool/keys/private.key";
 
     /**
      * String to hold name of the public key file.
      */
-    public static final String PUBLIC_KEY_FILE = "/etc/transfertool/public.key";
+    public static final String PUBLIC_KEY_FILE = "/etc/transfertool/keys/public.key";
 
     /**
      * Generate key which contains a pair of private and public key using 1024
@@ -42,7 +42,7 @@ public class EncriptionUtil {
     public static void generateKey() {
         try {
             final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHMKEYPARGENERATOR);
-            keyGen.initialize(2048); //2048 - 1024
+            keyGen.initialize(2048);
             final KeyPair key = keyGen.generateKeyPair();
 
             File privateKeyFile = new File(PRIVATE_KEY_FILE);

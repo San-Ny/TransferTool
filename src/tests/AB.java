@@ -2,11 +2,21 @@ package tests;
 
 public class AB {
     public static void main(String[] args) {
-        A a = new A();
-        B b = new B();
+        Server server = new Server();
+        Sender sender = new Sender();
 
-        a.start();
-        b.start();
+        // listener server, service
+        server.start();
+
+        // incoming connection
+        sender.start();
+
+        try{
+            server.join();
+            sender.join();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
 
     }
 }
