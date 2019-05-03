@@ -1,13 +1,19 @@
 package tests;
 
+import utils.ConfigurationUtil;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 
 public class Server extends Thread{
 
+    private Properties properties;
+
 
     public Server() {
+
     }
 
     @Override

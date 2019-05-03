@@ -7,13 +7,29 @@ public class FolderClass {
 
     private String path;
     private FileClass[] fileClasses;
+    private FolderClass[] folderClasses;
 
-    public FolderClass() {
+    public FolderClass[] getFolderClasses() {
+        return folderClasses;
+    }
+
+    public void setFolderClasses(FolderClass[] folderClasses) {
+        this.folderClasses = folderClasses;
+    }
+
+    public FolderClass(String path) {
+        this.path = path;
     }
 
     public FolderClass(String path, FileClass[] fileClasses) {
         this.path = path;
         this.fileClasses = fileClasses;
+    }
+
+    public FolderClass(String path, FileClass[] fileClasses, FolderClass[] folderClasses) {
+        this.path = path;
+        this.fileClasses = fileClasses;
+        this.folderClasses = folderClasses;
     }
 
     public String getPath() {

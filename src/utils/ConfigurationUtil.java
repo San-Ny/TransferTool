@@ -3,15 +3,28 @@ package utils;
 import java.io.*;
 import java.util.Properties;
 
+/**
+ * @author san
+ * @version 0.0.1
+ *
+ * license MIT <https://mit-license.org/>
+ */
 public class ConfigurationUtil {
 
-    public static final String CONFIGFILE = "/etc/transfertool/properties/transfertool.conf";
+    private static final String CONFIGFILE = "/etc/transfertool/properties/transfertool.conf";
 
+    /**
+     * check if file exists
+     * @return boolean
+     */
     public static boolean isConfigPresent() {
         File confFile = new File(CONFIGFILE);
         return confFile.exists();
     }
 
+    /**
+     * generates the conf file on CONFIGFILE path
+     */
     public static void generateConf(){
         try{
             String[] defaultConf = {
@@ -38,10 +51,8 @@ public class ConfigurationUtil {
             };
             File confFile = new File(CONFIGFILE);
 
-            if (confFile.getParentFile() != null) {
-                confFile.getParentFile().mkdirs();
-            }
-            confFile.createNewFile();
+            if (confFile.getParentFile() != null) if (confFile.getParentFile().mkdirs()) System.err.println("Run manually:\n $ sudo mkdir /etc/transfertool/ && sudo chmod 777 /etc/transfertool/ -R");
+            if (confFile.createNewFile()) System.err.println("Unable to write file, check permissions.");
 
             BufferedWriter publicConfOS = new BufferedWriter(new FileWriter(CONFIGFILE));
             for (String s: defaultConf) publicConfOS.write(s + "\n");
@@ -51,6 +62,10 @@ public class ConfigurationUtil {
         }
     }
 
+    /**
+     * get all params in properties object
+     * @return Properties object
+     */
     public static Properties getParams(){
         try(BufferedReader in = new BufferedReader(new FileReader(CONFIGFILE))){
             Properties properties = new Properties();
@@ -67,33 +82,51 @@ public class ConfigurationUtil {
         return null;
     }
 
+    /**
+     * get a property with the key name
+     * @param key property name
+     * @return property value or null if not found
+     */
     public static String getProperty(String key){
         try(BufferedReader in = new BufferedReader(new FileReader(CONFIGFILE))){
-            String line;
-            while ((line = in.readLine()) != null) {
-                if(line.isEmpty() || line.substring(0, 1).equals("#")) continue;
-                String[] parts = line.split(":");
-                if (parts[0].equals(key)) return parts[1];
-            }
-            return null;
+            return propertyReader(in,key);
         }catch (IOException e){
 //            e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * get property value if exists or default value
+     * @param key property name
+     * @param defaultValue property value if not found
+     * @return value or default value if property is missing
+     */
     public static String getPropertyOrDefault(String key, String defaultValue){
         try(BufferedReader in = new BufferedReader(new FileReader(CONFIGFILE))){
-            String line;
-            while ((line = in.readLine()) != null) {
-                if(line.isEmpty() || line.substring(0, 1).equals("#")) continue;
-                String[] parts = line.split(":");
-                if (parts[0].equals(key)) return parts[1];
-            }
-            return defaultValue;
+            String value = propertyReader(in, key);
+            if (value != null) return value;
+            else return defaultValue;
         }catch (IOException e){
 //            e.printStackTrace();
             return defaultValue;
         }
+    }
+
+    /**
+     * file reader & property getter
+     * @param in BufferedReader, file to read
+     * @param key property name
+     * @return value if key is present or null
+     * @throws IOException if file is missing or bad formatted
+     */
+    private static String propertyReader(BufferedReader in, String key) throws IOException{
+        String line;
+        while ((line = in.readLine()) != null) {
+            if(line.isEmpty() || line.substring(0, 1).equals("#")) continue;
+            String[] parts = line.split(":");
+            if (parts[0].equals(key)) return parts[1].trim();
+        }
+        return null;
     }
 }

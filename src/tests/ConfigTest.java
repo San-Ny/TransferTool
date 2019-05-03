@@ -15,7 +15,17 @@ public class ConfigTest {
             for(String s: keys){
                 System.out.println(s);
             }
+
+            System.out.println("------------------------------------------\n\n");
+
+            System.out.println(ConfigurationUtil.getProperty("test"));
+            System.out.println(ConfigurationUtil.getPropertyOrDefault("test", "noup"));
+
+            System.out.println(ConfigurationUtil.getProperty("PrivateKeyPath"));
+            System.out.println(ConfigurationUtil.getPropertyOrDefault("PrivateKeyPath", "noup"));
         }
+
+
 
     }
 }
