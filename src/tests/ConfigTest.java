@@ -10,7 +10,6 @@ public class ConfigTest {
         ConfigurationUtil.generateConf();
         Properties properties = ConfigurationUtil.getParams();
         if (properties != null){
-            System.out.println(properties.getProperty("EncriptionBytes","holaa"));
 
             Set<String> keys = properties.stringPropertyNames();
             for(String s: keys){
