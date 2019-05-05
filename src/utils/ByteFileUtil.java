@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class ByteFileUtil {
      * @throws FileNotFoundException If file is not present
      * @throws IOException general exceptions
      */
-    public static void writeBytes(String to, byte[] data) throws FileNotFoundException, IOException {
-        try (FileOutputStream out = new FileOutputStream(to)){
+    public static void writeBytes(Path to, byte[] data) throws FileNotFoundException, IOException {
+        try (FileOutputStream out = new FileOutputStream(to.toString())){
             for (byte b : data) out.write(b);
         }
     }
@@ -32,9 +33,9 @@ public class ByteFileUtil {
      * @throws FileNotFoundException file not found
      * @throws IOException general exceptions
      */
-    public static byte[] getBytes(String from) throws FileNotFoundException, IOException {
+    public static byte[] getBytes(Path from) throws FileNotFoundException, IOException {
         List<Byte> bytes = new ArrayList<>();
-        try (FileInputStream in = new FileInputStream(from)) {
+        try (FileInputStream in = new FileInputStream(from.toString())) {
             int c;
             while ((c = in.read()) != -1) bytes.add((byte) c);
         }
@@ -52,8 +53,8 @@ public class ByteFileUtil {
      * @throws FileNotFoundException file not found
      * @throws IOException general exceptions
      */
-    public static void writeObject(Object object, String to) throws FileNotFoundException, IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(to)))) {
+    public static void writeObject(Object object, Path to) throws FileNotFoundException, IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(to.toString())))) {
             out.writeObject(object);
         }
     }
@@ -65,8 +66,8 @@ public class ByteFileUtil {
      * @throws ClassNotFoundException Class not found
      * @throws IOException general exceptions
      */
-    public static Object getObject(String from) throws ClassNotFoundException, IOException {
-        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(from)))) {
+    public static Object getObject(Path from) throws ClassNotFoundException, IOException {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(from.toString())))) {
             return in.readObject();
         }
     }

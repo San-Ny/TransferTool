@@ -2,6 +2,7 @@ package sender;
 
 import pojos.TransferToolPKey;
 import utils.ByteSerializer;
+import utils.ConfigurationUtil;
 import utils.EncriptionUtil;
 import utils.ScannerUtil;
 
@@ -19,8 +20,7 @@ import java.security.interfaces.RSAPublicKey;
  * @version openjdk version "10.0.2" 2018-07-17
  *
  * @author   Toni <tonimercer300@gmail.com>
- * @serial   mit https://mit-license.org/
- * @link     san.data.ddns.net
+ * license   MIT <https://mit-license.org/>
  */
 
 public class Sender {
@@ -31,16 +31,23 @@ public class Sender {
      * @param args program arguments
      */
     public static void main(String[] args) {
+
+        //check conf file
+        if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
+
         //easy transfer files and folders
 
         //-p port
         //-R host
         //-W host:port
 
-        if (args.length < 2 || args.length > 4) System.exit(-1);
+        if (args.length < 3) {
+            System.out.println("Invalid arguments.");
+            System.exit(-1);
+        }
 
         String host = "";
-        String port = "9555";
+        String port = ConfigurationUtil.getPropertyOrDefault("ListenerPort", "9990");
 
         for (int a = 0; a < args.length; a++){
             if (args[a].equals("-R")) host = args[a + 1];
@@ -53,67 +60,60 @@ public class Sender {
             }
         }
 
-        if (port.equals("")) System.exit(-1);
+        if (port.equals("")) {
+            System.exit(-1);
+        }
 
 
         //certificates
 
-        RSAPublicKey publicKey = null;
-        RSAPrivateKey privateKey = null;
-        try{
-            // generates the keys if not eists
-            if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
-
-            //key file reader
-            ObjectInputStream inputStream;
-
-            // gets the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
-            publicKey = (RSAPublicKey) inputStream.readObject();
-
-            // gets the private key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
-            privateKey = (RSAPrivateKey) inputStream.readObject();
-
-        }catch (Exception e){
-            System.err.println("Certificates error");
-            System.exit(-1);
-        }
+//        RSAPublicKey publicKey = null;
+//        RSAPrivateKey privateKey = null;
+//        try{
+//            // generates the keys if not eists
+//            if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
+//
+//            //key file reader
+//            ObjectInputStream inputStream;
+//
+//            // gets the public key
+//            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
+//            publicKey = (RSAPublicKey) inputStream.readObject();
+//
+//            // gets the private key
+//            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
+//            privateKey = (RSAPrivateKey) inputStream.readObject();
+//
+//        }catch (Exception e){
+//            System.err.println("Certificates error");
+//            System.exit(-1);
+//        }
 
         try(Socket senderSocket = new Socket()){
             InetSocketAddress inetSocketAddress = new InetSocketAddress(host,Integer.parseInt(port));
             senderSocket.connect(inetSocketAddress);
 
+            System.out.println("Waiting conformation");
             //starting writer and reader
             BufferedInputStream reader = new BufferedInputStream(senderSocket.getInputStream());
             BufferedOutputStream writer = new BufferedOutputStream(senderSocket.getOutputStream());
 
-            //get senderPKey bits
-            byte[] senderPKey = ByteSerializer.serializeObject(new TransferToolPKey(publicKey));
-
-
-            //send sender key to other pc
-            writer.write(senderPKey);
-            writer.flush();
-
-            byte[] listenerPKeyBits = new byte[senderPKey.length];
-            int result = reader.read(listenerPKeyBits);
-
-            //transform the bits to object
-            TransferToolPKey listenerPKey = null;
             try{
-                listenerPKey = (TransferToolPKey) ByteSerializer.deserializeBytes(listenerPKeyBits);
-            }catch (ClassNotFoundException e){
-                System.err.println("class not found");
-                System.exit(-1);
+                int read = reader.read();
+                if (read == -1) {
+                    System.err.println("Server closed connection.");
+                    System.exit(1);
+                }
+            }catch (IOException e){
+//                e.printStackTrace();
+                System.err.println("Error while trying to connect.");
             }
 
-            System.out.println("connected");
+            System.out.println("Server accepted connection.");
 
             byte[] message = new byte[100];
-            reader.read(message);
-            String decriptedMsg = EncriptionUtil.decrypt(message,privateKey);
-            System.out.println(decriptedMsg);
+            int read = reader.read(message);
+
 
         }catch (IOException e){
             System.err.println(e.getMessage());

@@ -1,10 +1,13 @@
 package listener;
 
+import utils.ConfigurationUtil;
 import utils.EncriptionUtil;
+import utils.ScannerUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.PrivateKey;
@@ -12,50 +15,55 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+/**
+ * TransferTool
+ *
+ * @version openjdk version "10.0.2" 2018-07-17
+ *
+ * @author   Toni <tonimercer300@gmail.com>
+ * license   MIT <https://mit-license.org/>
+ */
+
 public class Listener {
     public static void main(String[] args) {
-        //-p port
-        //-v verbose connection, listener will be asked where to put the files
-        //-r recursive, will add recursively the files
+        //check conf file
+        if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
 
-        if (args.length > 3) System.err.println("Unexpected arguments");
-
-        String port = "9555";
-
-        for (int a = 0; a < args.length; a++) if (args[a].equals("-p")) port = args[a + 1];
-
-        //certificates
-
-        RSAPublicKey publicKey = null;
-        RSAPrivateKey privateKey = null;
-        try{
-            // generates the keys if not eists
-            if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
-
-            //key file reader
-            ObjectInputStream inputStream;
-
-            // gets the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
-            publicKey = (RSAPublicKey) inputStream.readObject();
-
-            // gets the private key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
-            privateKey = (RSAPrivateKey) inputStream.readObject();
-
-        }catch (Exception e){
-            System.err.println("Certificates error");
-            System.exit(-1);
-        }
+        String port = ConfigurationUtil.getPropertyOrDefault("ListenerPort", "9990");
 
         try(ServerSocket serverSocket = new ServerSocket(Integer.parseInt(port))){
             while(true){
+                //listening
                 Socket newSocket = serverSocket.accept();
-                ListenService listenService = new ListenService(newSocket, privateKey, publicKey);
+
+                //obtaining newSocket info and checking config file
+                String incomingConnections = ConfigurationUtil.getPropertyOrDefault("IncomingConnections", "Filtered");
+                InetSocketAddress inetSocketAddress = (InetSocketAddress)newSocket.getRemoteSocketAddress();
+
+                if (incomingConnections.equals("Verbose")){
+                    if (!ScannerUtil.getVerboseInput("Allow incoming connection of: " + inetSocketAddress.getHostString() + "<" + inetSocketAddress.getHostName() + "> [Y/n]")){
+                        System.err.println("Connexion closed!");
+                        newSocket.close();
+                        continue;
+                    }
+                }
+
+                if (incomingConnections.equals("Filtered")){
+                    String trusted = ConfigurationUtil.getPropertyOrDefault("TrustedHosts", "(^127\\.(([1-2]([0-5]?[0-5]))|[0-9]{1,2})\\.(([1-2]([0-5]?[0-5]))|[0-9]{1,2})\\.(([1-2]([0-5]?[0-5]))|[0-9]{1,2}))|(^192\\.168\\.(([1-2]([0-5]?[0-5]))|[0-9]{1,2})\\.(([1-2]([0-5]?[0-5]))|[0-9]{1,2}))");
+                    if (!inetSocketAddress.getHostString().matches(trusted)){
+                        System.err.println(inetSocketAddress.getHostString() + " untrusted Host, connection not allowed.");
+                        newSocket.close();
+                        continue;
+                    }
+                }
+
+                System.out.println("New connexion from " + inetSocketAddress.getHostString());
+
+                ListenService listenService = new ListenService(newSocket);
                 listenService.start();
             }
         }catch (IOException e){
-            System.err.println(e.getMessage());
+            System.exit(-1);
         }
     }
 }
