@@ -1,19 +1,12 @@
 package listener;
 
 import utils.ConfigurationUtil;
-import utils.EncriptionUtil;
 import utils.ScannerUtil;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 
 /**
  * TransferTool
