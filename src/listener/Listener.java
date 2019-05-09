@@ -15,6 +15,8 @@ import java.net.Socket;
  *
  * @author   Toni <tonimercer300@gmail.com>
  * license   MIT <https://mit-license.org/>
+ *
+ * @deprecated
  */
 
 public class Listener {

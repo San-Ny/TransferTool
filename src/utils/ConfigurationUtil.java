@@ -60,8 +60,10 @@ public class ConfigurationUtil {
                     "",
                     "",
                     "#[SENDER]",
+                    "SSHRemotePort:22",
+                    "Debugging:false",
                     "#Server default type connection; [Mandatory] encrypted only, or unencrypted [Free]",
-                    "Encryption:Free"
+                    "Encryption:Mandatory"
             };
             File confFile = new File(CONFIGFILE);
 

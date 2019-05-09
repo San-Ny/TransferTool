@@ -16,13 +16,13 @@ public class ByteFileUtil {
     /**
      * write a file from an byte array
      * @param to file path
-     * @param data byte array
+     * @param in byte array
      * @throws FileNotFoundException If file is not present
      * @throws IOException general exceptions
      */
-    public static void writeBytes(Path to, byte[] data) throws FileNotFoundException, IOException {
-        try (FileOutputStream out = new FileOutputStream(to.toString())){
-            for (byte b : data) out.write(b);
+    public static void writeFileFromStream(Path to, FileInputStream in) throws FileNotFoundException, IOException {
+        try (FileOutputStream out = new FileOutputStream(new File(to.toString()))){
+            for (byte b : in.readAllBytes()) out.write(b);
         }
     }
 
@@ -33,42 +33,7 @@ public class ByteFileUtil {
      * @throws FileNotFoundException file not found
      * @throws IOException general exceptions
      */
-    public static byte[] getBytes(Path from) throws FileNotFoundException, IOException {
-        List<Byte> bytes = new ArrayList<>();
-        try (FileInputStream in = new FileInputStream(from.toString())) {
-            int c;
-            while ((c = in.read()) != -1) bytes.add((byte) c);
-        }
-        return ByteSerializer.serializeObject(bytes.toArray());
-//        byte[] data = new byte[bytes.size()];
-//        int i = 0;
-//        for (Byte b : bytes) data[i++] = b;
-//        return data;
-    }
-
-    /**
-     * write object
-     * @param object file as object
-     * @param to path
-     * @throws FileNotFoundException file not found
-     * @throws IOException general exceptions
-     */
-    public static void writeObject(Object object, Path to) throws FileNotFoundException, IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(to.toString())))) {
-            out.writeObject(object);
-        }
-    }
-
-    /**
-     * return object
-     * @param from path
-     * @return  file as object
-     * @throws ClassNotFoundException Class not found
-     * @throws IOException general exceptions
-     */
-    public static Object getObject(Path from) throws ClassNotFoundException, IOException {
-        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(from.toString())))) {
-            return in.readObject();
-        }
+    public static FileOutputStream getStream(Path from) throws FileNotFoundException, IOException {
+         return new FileOutputStream(from.toString());
     }
 }

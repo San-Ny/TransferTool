@@ -1,18 +1,13 @@
 package sender;
 
-import pojos.TransferToolPKey;
-import utils.ByteSerializer;
-import utils.ConfigurationUtil;
-import utils.EncriptionUtil;
-import utils.ScannerUtil;
+import com.jcraft.jsch.*;
+import exceptions.TransferToolException;
+import exceptions.WrongArgumentException;
+import utils.*;
 
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
+import java.nio.file.Path;
+import java.util.Properties;
 
 /**
  * TransferTool
@@ -26,99 +21,94 @@ import java.security.interfaces.RSAPublicKey;
 public class Sender {
 
     /**
-     * Core program, gets the arguments and deploy the requested task
+     * Core program, creates the ssh session according to arguments and sends the requested files to the selected path
      *
-     * @param args program arguments
+     * @param args program arguments like file paths, ser, host, port, etc
      */
     public static void main(String[] args) {
 
         //check conf file
         if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
+        Properties properties = null;
 
-        //easy transfer files and folders
-
-        //-p port
-        //-R host
-        //-W host:port
-
-        if (args.length < 3) {
-            System.out.println("Invalid arguments.");
-            System.exit(-1);
+        try{
+            properties = ArgumentReaderUtil.getParams(args);
+        }catch (WrongArgumentException we){
+            we.printStackTrace();
+            System.exit(0);
         }
 
-        String host = "";
-        String port = ConfigurationUtil.getPropertyOrDefault("ListenerPort", "9990");
-
-        for (int a = 0; a < args.length; a++){
-            if (args[a].equals("-R")) host = args[a + 1];
-            else if (args[a].equals("-p")) port = args[a + 1];
-            else if (args[a].equals("-W")){
-                String[] hpCommand = args[a + 1].split(":");
-                if (hpCommand.length != 2) System.exit(-1);
-                host = hpCommand[0];
-                port = hpCommand[1];
+        //checking arguments
+        String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
+        for(String s : requiredProperties){
+            if (!properties.containsKey(s)) {
+                System.err.println("Missing required arguments");
+                System.exit(0);
             }
         }
 
-        if (port.equals("")) {
-            System.exit(-1);
+        //assignation
+        String user, port, host, fileLocal, fileRemote;
+        user = properties.getProperty("user");
+        port = properties.getProperty("port");
+        host = properties.getProperty("host");
+        fileLocal = properties.getProperty("fileLocal");
+        fileRemote = properties.getProperty("fileRemote");
+
+
+        //getting paths array; cleaning it
+        try{
+            if (PathFinderUtil.hasAsterisk(fileLocal)) PathFinderUtil.getAllRecursivePaths(Path.of(PathFinderUtil.removeAsterisk(fileLocal)));
+            else if (properties.containsKey("verbose")) PathFinderUtil.getVerbosePaths(Path.of(fileLocal));
+        }catch (IOException pe){
+            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")) pe.printStackTrace();
+            else System.err.println("Error on local path");
         }
 
+        try{
+            JSch jsch=new JSch();
+            Session session = jsch.getSession(user, host, Integer.parseInt(port));
+            fileRemote = fileRemote.replace("'", "'\"'\"'");
+            fileRemote = "'" + fileRemote + "'";
+            String command = "scp " + "-p" + " -t " + fileRemote;
+            Channel channel = session.openChannel("exec");
+            ((ChannelExec)channel).setCommand(command);
 
-        //certificates
-
-//        RSAPublicKey publicKey = null;
-//        RSAPrivateKey privateKey = null;
-//        try{
-//            // generates the keys if not eists
-//            if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
-//
-//            //key file reader
-//            ObjectInputStream inputStream;
-//
-//            // gets the public key
-//            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
-//            publicKey = (RSAPublicKey) inputStream.readObject();
-//
-//            // gets the private key
-//            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
-//            privateKey = (RSAPrivateKey) inputStream.readObject();
-//
-//        }catch (Exception e){
-//            System.err.println("Certificates error");
-//            System.exit(-1);
-//        }
-
-        try(Socket senderSocket = new Socket()){
-            InetSocketAddress inetSocketAddress = new InetSocketAddress(host,Integer.parseInt(port));
-            senderSocket.connect(inetSocketAddress);
-
-            System.out.println("Waiting conformation");
-            //starting writer and reader
-            BufferedInputStream reader = new BufferedInputStream(senderSocket.getInputStream());
-            BufferedOutputStream writer = new BufferedOutputStream(senderSocket.getOutputStream());
-
+            OutputStream out = null;
+            InputStream in = null;
             try{
-                int read = reader.read();
-                if (read == -1) {
-                    System.err.println("Server closed connection.");
-                    System.exit(1);
-                }
-            }catch (IOException e){
-//                e.printStackTrace();
-                System.err.println("Error while trying to connect.");
+                out = channel.getOutputStream();
+                in = channel.getInputStream();
+            }catch (IOException ioe){
+                if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1"))ioe.printStackTrace();
+                else System.err.println("Broken Streams");
+                System.exit(0);
             }
 
-            System.out.println("Server accepted connection.");
+            channel.connect();
 
-            byte[] message = new byte[100];
-            int read = reader.read(message);
+            //checking stream status, if not valid exception will be thrown
+            bufferStatus(in);
+
+            //sending files
 
 
-        }catch (IOException e){
-            System.err.println(e.getMessage());
+
+        }catch (JSchException | IOException | TransferToolException e){
+            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1"))e.printStackTrace();
+            else System.err.println("Transfer failed");
         }
 
 
+    }
+
+    static void bufferStatus(InputStream in) throws TransferToolException, IOException{
+        int b=in.read();
+        if(b != 0) {
+            StringBuilder sb = new StringBuilder();
+            int i;
+            while ((i = in.read()) != -1) sb.append((char) i);
+            throw new TransferToolException("Error on stream" + sb.toString());
+        }
     }
 }

@@ -9,6 +9,10 @@ import java.net.Socket;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+
+/**
+ * @deprecated
+ */
 public class ListenService extends Thread {
 
     private Socket socket;

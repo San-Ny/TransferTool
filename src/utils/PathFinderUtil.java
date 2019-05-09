@@ -2,9 +2,12 @@ package utils;
 
 import pojos.FileClass;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -24,6 +27,23 @@ public class PathFinderUtil {
             });
             return paths;
         }
+    }
+
+    public static ArrayList<Path> getAllFilesInPath(Path path) throws IOException, NullPointerException {
+        ArrayList<Path> paths = new ArrayList<>();
+
+        File folder = new File("/Users/you/folder/");
+        File[] listOfFiles = folder.listFiles();
+
+        assert listOfFiles != null;
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                paths.add(Path.of(file.getAbsolutePath()));
+                System.out.println(file.getName());
+            }
+        }
+
+        return paths;
     }
 
     /**
@@ -56,4 +76,34 @@ public class PathFinderUtil {
         }
         return path;
     }
+
+    /**
+     * check if path is valid
+     * @param path get the possible path string
+     * @return return if string is a valid path or not
+     */
+    public static boolean isValidPath(String path) {
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * check if a path ends with a asterisk
+     * @param path path to validate or clean
+     * @return return the path with the asterisk if is the case
+     */
+    public static String removeAsterisk(String path){
+        String lastChar = path.substring(path.length() - 1);
+        if (lastChar.equals("*")) return path.substring(0, path.length() - 1);
+        return path;
+    }
+
+    public static boolean hasAsterisk(String path){
+        return  path.substring(path.length() - 1).equals("*");
+    }
+
 }
