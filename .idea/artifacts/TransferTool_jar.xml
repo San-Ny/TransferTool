@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/TransferTool_jar</output-path>
     <root id="archive" name="TransferTool.jar">
       <element id="module-output" name="TransferTool" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/eLibraries/jsch-0.1.55.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

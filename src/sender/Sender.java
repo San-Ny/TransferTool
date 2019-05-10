@@ -3,7 +3,7 @@ package sender;
 import com.jcraft.jsch.*;
 import exceptions.TransferToolException;
 import exceptions.WrongArgumentException;
-import pojos.MyUserInfo;
+import pojos.SSH2User;
 import utils.*;
 
 import java.io.*;
@@ -75,14 +75,15 @@ public class Sender {
 //            config.put("StrictHostKeyChecking", ConfigurationUtil.getPropertyOrDefault("StrictHostKeyChecking", "yes"));
 //            config.put("cipher.s2c", "aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc");
 //            config.put("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256");
-//
+//            session.setConfig("kex", "diffie-hellman-group1-sha1");
 //            session.setConfig(config);
+//            session.setPassword(ScannerUtil.getPassword());
+
 //            session.setPort(Integer.parseInt(properties.getProperty("port")));
 //            session.setHost(properties.getProperty("host"));
-//            session.setPassword(ScannerUtil.getPassword());
-//            session.setConfig("kex", "diffie-hellman-group1-sha1");
+//            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
 
-            UserInfo ui=new MyUserInfo();
+            UserInfo ui=new SSH2User();
             session.setUserInfo(ui);
 
             try{

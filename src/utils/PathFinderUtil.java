@@ -1,8 +1,12 @@
 package utils;
 
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -154,6 +158,29 @@ public class PathFinderUtil {
         else if (isValidPath(path.toString()) && recursive && verbose) return getVerbosePaths(path);
 
         else throw new IOException("Fatal error processing local path\n error finding coincidences and arguments");
+    }
+
+    private void listFiles() throws URISyntaxException, JSchException, SftpException {
+
+//        JSch jsch = new JSch();
+//        JSch.setLogger(new JschLogger());
+//        setupSftpIdentity(jsch);
+//
+//        URI uri = new URI(sftpUrl);
+//        Session session = jsch.getSession(sshLogin, uri.getHost(), 22);
+//        session.setConfig("StrictHostKeyChecking", "no");
+//        session.connect();
+//        System.out.println("Connected to SFTP server");
+//
+//        Channel channel = session.openChannel("sftp");
+//        channel.connect();
+//        ChannelSftp sftpChannel = (ChannelSftp) channel;
+//        Vector<LsEntry> directoryEntries = sftpChannel.ls(uri.getPath());
+//        for (LsEntry file : directoryEntries) {
+//            System.out.println(String.format("File - %s", file.getFilename()));
+//        }
+//        sftpChannel.exit();
+//        session.disconnect();
     }
 
 }
