@@ -3,10 +3,13 @@ package sender;
 import com.jcraft.jsch.*;
 import exceptions.TransferToolException;
 import exceptions.WrongArgumentException;
+import pojos.MyUserInfo;
 import utils.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Properties;
 
 /**
@@ -58,16 +61,51 @@ public class Sender {
 
         //getting paths array; cleaning it
         try{
-            if (PathFinderUtil.hasAsterisk(fileLocal)) PathFinderUtil.getAllRecursivePaths(Path.of(PathFinderUtil.removeAsterisk(fileLocal)));
-            else if (properties.containsKey("verbose")) PathFinderUtil.getVerbosePaths(Path.of(fileLocal));
+            ArrayList<Path> paths = PathFinderUtil.getCorrectFormat(Path.of(fileLocal), properties);
         }catch (IOException pe){
-            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")) pe.printStackTrace();
+            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) pe.printStackTrace();
             else System.err.println("Error on local path");
         }
 
         try{
             JSch jsch=new JSch();
             Session session = jsch.getSession(user, host, Integer.parseInt(port));
+
+//            Properties config = new Properties();
+//            config.put("StrictHostKeyChecking", ConfigurationUtil.getPropertyOrDefault("StrictHostKeyChecking", "yes"));
+//            config.put("cipher.s2c", "aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc");
+//            config.put("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256");
+//
+//            session.setConfig(config);
+//            session.setPort(Integer.parseInt(properties.getProperty("port")));
+//            session.setHost(properties.getProperty("host"));
+//            session.setPassword(ScannerUtil.getPassword());
+//            session.setConfig("kex", "diffie-hellman-group1-sha1");
+
+            UserInfo ui=new MyUserInfo();
+            session.setUserInfo(ui);
+
+            try{
+                session.connect();
+            }catch(final JSchException jex){
+
+                if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]:")){
+                    byte [] key = Base64.getDecoder().decode ( session.getHostKey().getKey());
+                    HostKey hostKey = new HostKey(session.getHost(), key);
+                    jsch.getHostKeyRepository().add (hostKey, null );
+                }
+                try{
+                    session.connect(2000);
+                }catch (JSchException end){
+                    if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) end.printStackTrace();
+                    else System.err.println("There's no common cipher to choose from.\n\tIs Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed??");
+                    System.exit(0);
+                }
+
+            }
+
+            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) System.out.println("Connected to remote host, sharing files;");
+
             fileRemote = fileRemote.replace("'", "'\"'\"'");
             fileRemote = "'" + fileRemote + "'";
             String command = "scp " + "-p" + " -t " + fileRemote;
@@ -80,7 +118,7 @@ public class Sender {
                 out = channel.getOutputStream();
                 in = channel.getInputStream();
             }catch (IOException ioe){
-                if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1"))ioe.printStackTrace();
+                if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")|| properties.getProperty("Debugging").equals("1"))ioe.printStackTrace();
                 else System.err.println("Broken Streams");
                 System.exit(0);
             }
@@ -95,7 +133,7 @@ public class Sender {
 
 
         }catch (JSchException | IOException | TransferToolException e){
-            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1"))e.printStackTrace();
+            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")|| properties.getProperty("Debugging").equals("1"))e.printStackTrace();
             else System.err.println("Transfer failed");
         }
 
