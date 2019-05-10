@@ -83,18 +83,23 @@ public class Sender {
 //            session.setHost(properties.getProperty("host"));
 //            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
 
-            UserInfo ui=new SSH2User();
+            UserInfo ui = new SSH2User();
             session.setUserInfo(ui);
 
             try{
                 session.connect();
             }catch(final JSchException jex){
-
-                if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]:")){
-                    byte [] key = Base64.getDecoder().decode ( session.getHostKey().getKey());
-                    HostKey hostKey = new HostKey(session.getHost(), key);
-                    jsch.getHostKeyRepository().add (hostKey, null );
+                try{
+                    if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]:")){
+                        byte [] key = Base64.getDecoder().decode ( session.getHostKey().getKey());
+                        HostKey hostKey = new HostKey(session.getHost(), key);
+                        jsch.getHostKeyRepository().add (hostKey, null );
+                    }
+                }catch (NullPointerException nullPointer){
+                    System.err.println("Host unreachable");
+                    System.exit(0);
                 }
+
                 try{
                     session.connect(2000);
                 }catch (JSchException end){

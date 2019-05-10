@@ -37,8 +37,8 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
     }
 
     @Override
-    public boolean promptYesNo(String arg0) {
-        return ScannerUtil.getVerboseInput(arg0 + " [Y/n]");
+    public boolean promptYesNo(String msg) {
+        return ScannerUtil.getVerboseInput(msg + " [Y/n]");
     }
 
     @Override
