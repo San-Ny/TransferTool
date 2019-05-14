@@ -37,6 +37,7 @@ public class JSchIOStramTest {
             rfile=rfile.replace("'", "'\"'\"'");
             rfile="'"+rfile+"'";
             String command="scp " + (ptimestamp ? "-p" :"") +" -t "+rfile;
+
             Channel channel=session.openChannel("exec");
             ((ChannelExec)channel).setCommand(command);
 

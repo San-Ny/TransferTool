@@ -19,7 +19,7 @@ public class ArgumentReaderUtil {
         //-v verbose
         //-d debugging
         //-W host:port
-        //-J [user@]host[:port]
+        //-J [user@]host[:remoteFile]
         //-fl files local
         //-fr files remote
 
@@ -28,8 +28,10 @@ public class ArgumentReaderUtil {
             System.exit(0);
         }
 
-        boolean defaultArguments = false;
+        //load default parameters
+        properties.put("Debugging", "1");
 
+        //read arguments and overwrite def parameters
         for (int a = 0; a < args.length; a++){
             if (args[a].equals("-R")) properties.put("host",args[++a]);
             else if (args[a].equals("-p")) properties.put("port",args[++a]);
@@ -57,7 +59,7 @@ public class ArgumentReaderUtil {
                 if (a == 0) properties.put("fileLocal",args[a]);
                 else if (a == 1){
                     String[] hpCommand = args[a].split("[@:]");
-                    if (hpCommand.length != 3) throw new WrongArgumentException("Wrong parameter on arguments:\n\t[user@]host[:path]");
+                    if (hpCommand.length != 3) throw new WrongArgumentException("Wrong default parameters on arguments:\n\t[user@]host[:path]");
                     properties.put("user",hpCommand[0]);
                     properties.put("host",hpCommand[1]);
                     properties.put("fileRemote",hpCommand[2]);

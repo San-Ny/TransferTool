@@ -40,7 +40,7 @@ public class PathFinderUtil {
         File folder = new File(path.toString());
         File[] listOfFiles = folder.listFiles();
 
-        if (listOfFiles == null) throw new FileNotFoundException("");
+        if (listOfFiles == null) throw new FileNotFoundException("There are no files in this path");
         for (File file : listOfFiles) if (file.isFile()) paths.add(Path.of(file.getAbsolutePath()));
 
         return paths;
