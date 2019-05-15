@@ -90,12 +90,9 @@ public class EncriptionUtil {
     /**
      * Encrypt the plain text using public key.
      *
-     * @param text
-     *          : original plain text
-     * @param key
-     *          :The public key
+     * @param text : original plain text
+     * @param key : The public key
      * @return Encrypted text
-     * @throws java.lang.Exception
      */
     public static byte[] encrypt(String text, PublicKey key) {
         try {
@@ -111,12 +108,9 @@ public class EncriptionUtil {
     /**
      * Decrypt text using private key.
      *
-     * @param text
-     *          :encrypted text
-     * @param key
-     *          :The private key
+     * @param text :encrypted text
+     * @param key :The private key
      * @return plain text
-     * @throws java.lang.Exception
      */
     public static String decrypt(byte[] text, PrivateKey key) {
         try {

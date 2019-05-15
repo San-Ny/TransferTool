@@ -1,7 +1,6 @@
 package utils;
 
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,8 +13,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Vector;
 import java.util.stream.Stream;
 
+/**
+ * @author san
+ * @version 0.0.1
+ *
+ * license MIT <https://mit-license.org/>
+ */
 public class PathFinderUtil {
 
     /**
@@ -23,6 +29,7 @@ public class PathFinderUtil {
      *
      * @param path the starting path
      * @return ArrayList<Path> return all path as ArrayList or IOException
+     * @throws IOException if walk method found en empty or unreachable folder
      */
     public static ArrayList<Path> getAllRecursivePaths(Path path) throws IOException {
         ArrayList<Path> paths = new ArrayList<>();
@@ -34,7 +41,13 @@ public class PathFinderUtil {
         }
     }
 
-    public static ArrayList<Path> getAllFilesInPath(Path path) throws FileNotFoundException, NullPointerException {
+    /**
+     * read a folder and only return files, ignoring folders
+     * @param path path to check files
+     * @return return array of file paths
+     * @throws FileNotFoundException if folder is not reachable
+     */
+    public static ArrayList<Path> getAllFilesInPath(Path path) throws FileNotFoundException {
         ArrayList<Path> paths = new ArrayList<>();
 
         File folder = new File(path.toString());
@@ -46,18 +59,29 @@ public class PathFinderUtil {
         return paths;
     }
 
-    public static ArrayList<Path> getAllFilesInPathVerbose(Path path) throws FileNotFoundException, NullPointerException {
+    /**
+     * get all paths from folder recursively but returned array will be filtered for only allow accepted paths from user
+     * @param path folder to check
+     * @return array with accepted paths from user
+     * @throws FileNotFoundException if folder is not reachable
+     */
+    public static ArrayList<Path> getAllFilesInPathVerbose(Path path) throws FileNotFoundException {
         ArrayList<Path> paths = new ArrayList<>();
 
         File folder = new File(path.toString());
         File[] listOfFiles = folder.listFiles();
 
-        if (listOfFiles == null) throw new FileNotFoundException("");
+        if (listOfFiles == null) throw new FileNotFoundException("No selected file");
         for (File file : listOfFiles) if (file.isFile()) if (ScannerUtil.getVerboseInput("Do you want to add the following file? [Y/n] " + file.getName() + "\n")) paths.add(Path.of(file.getAbsolutePath()));
 
         return paths;
     }
 
+    /**
+     * returns file name
+     * @param path gets the file path
+     * @return return the name as string
+     */
     public static String getPathFileName(Path path) {
         File file = new File(path.toString());
         return file.getName();
@@ -81,7 +105,12 @@ public class PathFinderUtil {
         }
     }
 
-    public static ArrayList<Path> getFile(Path path) throws IOException{
+    /**
+     * convert path to array with only one instance
+     * @param path file path
+     * @return return an ArrayList
+     */
+    public static ArrayList<Path> getFile(Path path){
         return new ArrayList<>(Collections.singletonList(path));
     }
 
@@ -96,7 +125,7 @@ public class PathFinderUtil {
     }
 
     /**
-     * check if path is valid
+     * check if path is reachable
      * @param path get the possible path string
      * @return return if string is a valid path or not
      */
@@ -137,6 +166,13 @@ public class PathFinderUtil {
         return  path.substring(path.length() - 1).matches("[/]");
     }
 
+    /**
+     * gets a path and user properties to return requested ArrayList
+     * @param path gets user path input
+     * @param properties gets user properties
+     * @return ArrayList with the requested paths; verbose onli folder files, file, or recursive folder
+     * @throws IOException method will throw up exceptions from submethods or end up with exception if path is unhandled
+     */
     public static ArrayList<Path> getCorrectFormat(Path path, Properties properties) throws IOException{
         boolean recursive = false, verbose = false;
         if (properties.containsKey("recursive") && properties.getProperty("recursive").equals("1")) recursive = true;
@@ -165,27 +201,25 @@ public class PathFinderUtil {
         else throw new IOException("Fatal error processing local path\n error finding coincidences and arguments");
     }
 
-    private void listFiles() throws URISyntaxException, JSchException, SftpException {
+    /**
+     * prints all paths from session
+     * @throws JSchException session unavailable
+     * @throws SftpException problems with SFPT on session
+     */
+    private void listFiles(Session session, Path path) throws JSchException, SftpException {
 
-//        JSch jsch = new JSch();
-//        JSch.setLogger(new JschLogger());
-//        setupSftpIdentity(jsch);
-//
-//        URI uri = new URI(sftpUrl);
-//        Session session = jsch.getSession(sshLogin, uri.getHost(), 22);
-//        session.setConfig("StrictHostKeyChecking", "no");
-//        session.connect();
-//        System.out.println("Connected to SFTP server");
-//
-//        Channel channel = session.openChannel("sftp");
-//        channel.connect();
-//        ChannelSftp sftpChannel = (ChannelSftp) channel;
-//        Vector<LsEntry> directoryEntries = sftpChannel.ls(uri.getPath());
-//        for (LsEntry file : directoryEntries) {
-//            System.out.println(String.format("File - %s", file.getFilename()));
-//        }
-//        sftpChannel.exit();
-//        session.disconnect();
+        session.connect();
+        System.out.println("Connected to SFTP server");
+
+        Channel channel = session.openChannel("sftp");
+        channel.connect();
+        ChannelSftp sftpChannel = (ChannelSftp) channel;
+        Vector<ChannelSftp.LsEntry> directoryEntries = sftpChannel.ls(path.toString());
+        for (ChannelSftp.LsEntry file : directoryEntries) {
+            System.out.println(String.format("File - %s", file.getFilename()));
+        }
+        sftpChannel.exit();
+        session.disconnect();
     }
 
 }

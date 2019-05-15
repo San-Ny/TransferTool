@@ -1,25 +1,42 @@
 package utils;
 
 import exceptions.TransferToolException;
-
 import java.io.Console;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Scanner;
 
+/**
+ * @author san
+ * @version 0.0.1
+ *
+ * license MIT <https://mit-license.org/>
+ */
 public class ScannerUtil {
 
+    /**
+     * get scanner line input
+     * @return String with the input
+     */
     public static String getLine(){
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
 
+    /**
+     * get scanner line input printing a message
+     * @param msg message to show  before reading
+     * @return String with the input
+     */
     public static String getLine(String msg){
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
 
+    /**
+     * read a password console field with the console instance attached to the program
+     * @return String with the password
+     * @throws TransferToolException Thrown if console instance isn't attached example IDE
+     */
     public static String  readPassword() throws TransferToolException{
         Console console = System.console();
         try{
@@ -31,26 +48,10 @@ public class ScannerUtil {
     }
 
     /**
-     * method to read password from IDE
-     * @return
-     * @throws IOException
-     * @deprecated
+     * show  message and reads user input Y/y/S/s as true N/n as false, invalid params will be ignored and asked again
+     * @param msg message to show before user inserts data
+     * @return return response
      */
-    public static String getPassword() throws IOException {
-            System.out.print("Password: ");
-            InputStream in=System.in;
-            int max=50;
-            byte[] b=new byte[max];
-
-            int l= in.read(b);
-            l--;
-            if (l>0) {
-                byte[] e=new byte[l];
-                System.arraycopy(b,0, e, 0, l);
-                return new String(e);
-            } else return null;
-    }
-
     public static boolean getVerboseInput(String msg){
         while (true) {
             System.out.print(msg);

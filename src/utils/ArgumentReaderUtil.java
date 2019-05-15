@@ -1,12 +1,22 @@
 package utils;
 
 import exceptions.WrongArgumentException;
-
-import java.lang.reflect.Parameter;
 import java.util.Properties;
 
+/**
+ * @author san
+ * @version 0.0.1
+ *
+ * license MIT <https://mit-license.org/>
+ */
 public class ArgumentReaderUtil {
 
+    /**
+     * gets an array
+     * @param args user input as array
+     * @return Properties with the arguments inserted
+     * @throws WrongArgumentException if arguments are invalid or bad filled
+     */
     public static Properties getParams(String[] args) throws WrongArgumentException {
         Properties properties = new Properties();
 

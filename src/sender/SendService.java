@@ -12,6 +12,14 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.Properties;
 
+/**
+ * TransferTool
+ *
+ * @version openjdk version "10.0.2" 2018-07-17
+ *
+ * @author   Toni <tonimercer300@gmail.com>
+ * license   MIT <https://mit-license.org/>
+ */
 public class SendService extends Thread {
 
     private Session session;
@@ -20,6 +28,14 @@ public class SendService extends Thread {
     private boolean debugging;
     private String newFileName;
 
+    /**
+     * constructor to instance variables
+     * @param session ssh session
+     * @param properties user properties
+     * @param path path to local file
+     * @param debugging if debugging messages will be shown
+     * @param newFileName a new file name if requested
+     */
     public SendService(Session session, Properties properties, Path path, boolean debugging, String newFileName) {
         this.session = session;
         this.properties = properties;
@@ -28,6 +44,9 @@ public class SendService extends Thread {
         this.newFileName = newFileName;
     }
 
+    /**
+     * creates an exec channel on the session to execute commands and write the data
+     */
     @Override
     public void run() {
         super.run();
@@ -111,6 +130,12 @@ public class SendService extends Thread {
         }
     }
 
+    /**
+     * checks buffer status; if closed will throw Exception
+     * @param in BufferedInputStream to read data
+     * @throws TransferToolException If the function is able to read the data
+     * @throws IOException read method unsuccessful
+     */
     static void bufferStatus(BufferedInputStream in) throws TransferToolException, IOException{
         int b=in.read();
         if(b != 0) {

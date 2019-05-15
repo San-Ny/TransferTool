@@ -20,7 +20,6 @@ import java.util.Properties;
  * @author   Toni <tonimercer300@gmail.com>
  * license   MIT <https://mit-license.org/>
  */
-
 public class Sender {
 
     /**
@@ -122,7 +121,7 @@ public class Sender {
             System.exit(0);
 
         }catch (JSchException e){
-            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")|| properties.getProperty("Debugging").equals("1"))e.printStackTrace();
+            if (debugging)e.printStackTrace();
             else System.err.println("Transfer failed");
         }
     }
