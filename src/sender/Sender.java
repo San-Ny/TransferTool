@@ -52,12 +52,11 @@ public class Sender {
 
         //assignation
         String user, port, host, fileLocal;
-        boolean debugging = false;
+        boolean debugging = properties.getProperty("Debugging").equals("1");
         user = properties.getProperty("user");
         port = properties.getProperty("port");
         host = properties.getProperty("host");
         fileLocal = properties.getProperty("fileLocal");
-        if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) debugging = true;
 
 
         //getting paths array; cleaning it
@@ -65,7 +64,7 @@ public class Sender {
         try{
             paths = PathFinderUtil.getCorrectFormat(Path.of(fileLocal), properties);
         }catch (IOException pe){
-            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) pe.printStackTrace();
+            if (debugging) pe.printStackTrace();
             else System.err.println("Error on local path");
             System.exit(0);
         }
