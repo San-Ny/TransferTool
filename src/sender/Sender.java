@@ -109,13 +109,18 @@ public class Sender {
                 if (debugging) System.out.println("Thread running");
             }
 
-//            try{
-//                for (SendService sendService : fileToScp) sendService.join();
-//            }catch (InterruptedException in){
-//                if (debugging) throw new TransferToolException(in.getMessage());
-//                else System.err.println("Share subprocess interrupted, data will be corrupt or incomplete!");
-//                System.exit(-1);
-//            }
+            try{
+                for (SendService sendService : fileToScp) sendService.join();
+            }catch (InterruptedException in){
+                if (debugging) throw new TransferToolException(in.getMessage());
+                else System.err.println("Share subprocess interrupted, data will be corrupt or incomplete!");
+                System.exit(-1);
+            }
+
+            if (fileLocal.length() != 1) System.out.println("All files transferred");
+            else System.out.println("File transferred");
+            session.disconnect();
+            System.exit(0);
 
         }catch (JSchException e){
             if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")|| properties.getProperty("Debugging").equals("1"))e.printStackTrace();
