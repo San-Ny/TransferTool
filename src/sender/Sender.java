@@ -1,6 +1,7 @@
 package sender;
 
 import com.jcraft.jsch.*;
+import exceptions.TransferToolException;
 import exceptions.WrongArgumentException;
 import pojos.SSH2User;
 import utils.*;
@@ -27,7 +28,7 @@ public class Sender {
      *
      * @param args program arguments like file paths, ser, host, port, etc
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TransferToolException {
 
         //check conf file
         if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
@@ -100,17 +101,25 @@ public class Sender {
 
             }
 
-            for (int a = 0; a < paths.size(); a++){
-                SendService sendService = new SendService(session, properties, paths.get(a),debugging);
-                sendService.run();
+            SendService[] fileToScp = new SendService[paths.size()];
+            for (int a = 0; a < fileToScp.length; a++){
+                if (debugging) System.out.println("New Thread: mission scp -> " + paths.get(a) + "to " + properties.getProperty("fileRemote"));
+                fileToScp[a] = new SendService(session, properties, paths.get(a),debugging, PathFinderUtil.getPathFileName(paths.get(a)));
+                fileToScp[a].run();
                 if (debugging) System.out.println("Thread running");
             }
+
+//            try{
+//                for (SendService sendService : fileToScp) sendService.join();
+//            }catch (InterruptedException in){
+//                if (debugging) throw new TransferToolException(in.getMessage());
+//                else System.err.println("Share subprocess interrupted, data will be corrupt or incomplete!");
+//                System.exit(-1);
+//            }
 
         }catch (JSchException e){
             if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1")|| properties.getProperty("Debugging").equals("1"))e.printStackTrace();
             else System.err.println("Transfer failed");
         }
-
-
     }
 }

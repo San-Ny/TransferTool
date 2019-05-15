@@ -6,6 +6,7 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import exceptions.TransferToolException;
+import utils.PathFinderUtil;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -17,23 +18,24 @@ public class SendService extends Thread {
     private Properties properties;
     private Path path;
     private boolean debugging;
+    private String newFileName;
 
-    public SendService(Session session, Properties properties, Path path, boolean debugging) {
+    public SendService(Session session, Properties properties, Path path, boolean debugging, String newFileName) {
         this.session = session;
         this.properties = properties;
         this.path = path;
         this.debugging = debugging;
+        this.newFileName = newFileName;
     }
 
     @Override
     public void run() {
         super.run();
 
-        BufferedInputStream fis = null;
+        BufferedInputStream fis;
         try{
-            if (debugging) System.out.println("Connected!");
-
             String fileRemote = properties.getProperty("fileRemote");
+            if (PathFinderUtil.hasFinalBar(properties.getProperty("fileRemote"))) fileRemote = properties.getProperty("fileRemote") + newFileName;
 
             fileRemote = fileRemote.replace("'", "'\"'\"'");
             fileRemote = "'" + fileRemote + "'";
@@ -42,11 +44,13 @@ public class SendService extends Thread {
             Channel channel = session.openChannel("exec");
             ((ChannelExec)channel).setCommand(command);
 
-            BufferedReader in = null;
-            BufferedWriter out = null;
+            if (debugging) System.out.println("Channel created on session!");
+
+            BufferedInputStream in = null;
+            BufferedOutputStream out = null;
             try{
-                out = new BufferedWriter(new OutputStreamWriter(channel.getOutputStream()));
-                in = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+                out = new BufferedOutputStream(channel.getOutputStream());
+                in = new BufferedInputStream(channel.getInputStream());
             }catch (IOException ioe){
                 if (debugging)ioe.printStackTrace();
                 else System.err.println("Broken Streams");
@@ -64,41 +68,40 @@ public class SendService extends Thread {
                 // The access time should be sent here,
                 // but it is not accessible with JavaAPI ;-<
             command += (" " + (file.lastModified() / 1000) + " 0\n");
-            out.write(command);
+            out.write(command.getBytes());
             out.flush();
 
             bufferStatus(in);
 
-            // send "C0644 filesize filename", where filename should not include '/'
-            long filesize=file.length();
-            command="C0644 "+filesize+" ";
+            // send "C0644 l filename", where filename should not include '/'
+            command = "C0644 " + file.length() + " ";
 
-            if(fileRemote.lastIndexOf('/')>0) command+=fileRemote.substring(fileRemote.lastIndexOf('/')+1);
-
+            if(fileRemote.lastIndexOf('/') > 0) command += fileRemote.substring(fileRemote.lastIndexOf('/') + 1);
             else command += fileRemote;
-            command+="\n";
-            out.write(command);
+
+            command += "\n";
+            out.write(command.getBytes());
             out.flush();
 
             bufferStatus(in);
 
-            // send a content of lfile
-            fis=new BufferedInputStream(fileRemote);
-            byte[] buf=new byte[1024];
-            while(true){
-                int len = fis.read(buf, 0, buf.length);
-                if(len <= 0) break;
-                out.write(buf); //out.flush();
+            // send a content of local file
+            fis = new BufferedInputStream(new FileInputStream(path.toString()));
+
+            int content;
+            while ((content = fis.read()) != -1) {
+                // convert to char and display it
+                out.write((char) content);
             }
             fis.close();
 
             // send '\0'
-            buf[0]=0; out.write("0"); out.flush();
+            out.write(0);
+            out.flush();
 
             bufferStatus(in);
 
             out.close();
-
             channel.disconnect();
             if (debugging) System.out.println("File transferred");
         }catch (JSchException | IOException | TransferToolException e){
@@ -106,11 +109,9 @@ public class SendService extends Thread {
             else System.err.println("Error sending file");
             System.exit(-1);
         }
-
-
     }
 
-    static void bufferStatus(BufferedReader in) throws TransferToolException, IOException{
+    static void bufferStatus(BufferedInputStream in) throws TransferToolException, IOException{
         int b=in.read();
         if(b != 0) {
             StringBuilder sb = new StringBuilder();

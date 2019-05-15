@@ -83,12 +83,13 @@ public class JSchIOStramTest {
             fis=new FileInputStream(lfile);
             byte[] buf=new byte[1024];
             while(true){
-                int len=fis.read(buf, 0, buf.length);
+                int len = fis.read(buf, 0, buf.length);
                 if(len<=0) break;
                 out.write(buf, 0, len); //out.flush();
             }
             fis.close();
             fis=null;
+
             // send '\0'
             buf[0]=0; out.write(buf, 0, 1); out.flush();
             if(checkAck(in)!=0){

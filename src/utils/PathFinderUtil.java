@@ -58,6 +58,11 @@ public class PathFinderUtil {
         return paths;
     }
 
+    public static String getPathFileName(Path path) {
+        File file = new File(path.toString());
+        return file.getName();
+    }
+
     /**
      * ask for every file in the folder recursively
      * @param path starting path
