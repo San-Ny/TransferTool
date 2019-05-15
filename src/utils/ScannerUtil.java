@@ -37,12 +37,12 @@ public class ScannerUtil {
      * @return String with the password
      * @throws TransferToolException Thrown if console instance isn't attached example IDE
      */
-    public static String  readPassword() throws TransferToolException{
+    public static String getPassword() throws TransferToolException{
         Console console = System.console();
         try{
             return String.valueOf(console.readPassword("Enter Password: "));
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw new TransferToolException("Unable to get console instance");
         }
     }
@@ -54,8 +54,7 @@ public class ScannerUtil {
      */
     public static boolean getVerboseInput(String msg){
         while (true) {
-            System.out.print(msg);
-            String line = ScannerUtil.getLine();
+            String line = ScannerUtil.getLine(msg);
             if (line.equals("Y") || line.equals("y") || line.equals("S") || line.equals("s")) {
                 return true;
             } else if (line.equals("N") || line.equals("n")) return false;

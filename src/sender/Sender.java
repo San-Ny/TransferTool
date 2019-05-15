@@ -72,14 +72,14 @@ public class Sender {
             JSch jsch=new JSch();
             Session session = jsch.getSession(user, host, Integer.parseInt(port));
 
-            UserInfo ui = new SSH2User();
+            UserInfo ui = new SSH2User(debugging);
             session.setUserInfo(ui);
 
             try{
                 session.connect();
             }catch(final JSchException jex){
                 try{
-                    if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]:")){
+                    if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]: ")){
                         byte [] key = Base64.getDecoder().decode ( session.getHostKey().getKey());
                         HostKey hostKey = new HostKey(session.getHost(), key);
                         jsch.getHostKeyRepository().add (hostKey, null );
@@ -101,7 +101,7 @@ public class Sender {
 
             SendService[] fileToScp = new SendService[paths.size()];
             for (int a = 0; a < fileToScp.length; a++){
-                if (debugging) System.out.println("New Thread: mission scp -> " + paths.get(a) + "to " + properties.getProperty("fileRemote"));
+                if (debugging) System.out.println("New Thread: mission scp -> " + paths.get(a) + " to " + properties.getProperty("fileRemote"));
                 fileToScp[a] = new SendService(session, properties, paths.get(a),debugging, PathFinderUtil.getPathFileName(paths.get(a)));
                 fileToScp[a].run();
                 if (debugging) System.out.println("Thread running");

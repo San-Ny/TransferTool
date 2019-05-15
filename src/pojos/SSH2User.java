@@ -2,11 +2,16 @@ package pojos;
 
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+import exceptions.TransferToolException;
 import utils.ScannerUtil;
 
-import java.io.IOException;
-
 public class SSH2User implements UserInfo, UIKeyboardInteractive {
+
+    private boolean debugging;
+
+    public SSH2User(boolean debugging){
+        this.debugging = debugging;
+    }
 
     @Override
     public String getPassphrase() {
@@ -17,22 +22,20 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
     public String getPassword() {
         try{
             return ScannerUtil.getPassword();
-        }catch (IOException e){
-            System.err.println("Unable to get console instance");
-            System.exit(-1);
+        }catch (TransferToolException e){
+            return ScannerUtil.getLine("Error with password input; Enter Password as plain text: ");
         }
-        return null;
     }
 
     @Override
     public boolean promptPassphrase(String msg) {
-        System.out.println("promptPassphrase : "+msg);
+        if (debugging) System.out.println("promptPassphrase : " + msg);
         return true;
     }
 
     @Override
     public boolean promptPassword(String msg) {
-        System.out.println("promptPassword : "+msg);
+        if (debugging) System.out.println("promptPassword : " + msg);
         return true;
     }
 
@@ -59,12 +62,14 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
     @Override
     public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt, boolean[] echo) {
 
-        System.out.println("promptKeyboardInteractive");
-        System.out.println("destination: "+destination);
-        System.out.println("name: "+name);
-        System.out.println("instruction: "+instruction);
-        System.out.println("prompt.length: "+prompt.length);
-        System.out.println("prompt: "+prompt[0]);
+        if (debugging){
+           System.out.println("promptKeyboardInteractive");
+           System.out.println("destination: "+destination);
+           System.out.println("name: "+name);
+           System.out.println("instruction: "+instruction);
+           System.out.println("prompt.length: "+prompt.length);
+           System.out.println("prompt: "+prompt[0]);
+        }
 
         return null ;
     }
