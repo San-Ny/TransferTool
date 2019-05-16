@@ -1,4 +1,4 @@
-package sender;
+package sshsender;
 
 
 import com.jcraft.jsch.Channel;
@@ -20,7 +20,7 @@ import java.util.Properties;
  * @author   Toni <tonimercer300@gmail.com>
  * license   MIT <https://mit-license.org/>
  */
-public class SendService extends Thread {
+public class SCPSendService extends Thread {
 
     private Session session;
     private Properties properties;
@@ -36,7 +36,7 @@ public class SendService extends Thread {
      * @param debugging if debugging messages will be shown
      * @param newFileName a new file name if requested
      */
-    public SendService(Session session, Properties properties, Path path, boolean debugging, String newFileName) {
+    public SCPSendService(Session session, Properties properties, Path path, boolean debugging, String newFileName) {
         this.session = session;
         this.properties = properties;
         this.path = path;

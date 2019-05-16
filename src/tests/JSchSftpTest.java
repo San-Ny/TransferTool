@@ -2,6 +2,8 @@ package tests;
 
 import com.jcraft.jsch.*;
 
+import java.util.Properties;
+
 public class JSchSftpTest {
 
     public static void main(String[] args) {
@@ -10,6 +12,9 @@ public class JSchSftpTest {
         try {
             session = jsch.getSession("grdar", "192.168.1.203", 22); //default port is 22
             UserInfo ui = new MyUserInfo();
+            Properties properties = new Properties();
+            properties.put("StrictHostKeyChecking", "no");
+            session.setConfig(properties);
             session.setUserInfo(ui);
             session.setPassword("grdar".getBytes());
             session.connect();

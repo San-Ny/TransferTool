@@ -1,8 +1,6 @@
-package sender;
+package sshsender;
 
 import com.jcraft.jsch.*;
-import exceptions.TransferToolException;
-import exceptions.WrongArgumentException;
 import pojos.SSH2User;
 import utils.*;
 
@@ -20,38 +18,29 @@ import java.util.Properties;
  * @author   Toni <tonimercer300@gmail.com>
  * license   MIT <https://mit-license.org/>
  */
-public class Sender {
+public class SCPSender extends Thread {
 
-    /**
-     * Core program, creates the ssh session according to arguments and sends the requested files to the selected path
-     *
-     * @param args program arguments like file paths, ser, host, port, etc
-     */
-    public static void main(String[] args) throws TransferToolException {
+    private Properties properties;
 
-        //check conf file
-        if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
-        Properties properties = null;
+    public SCPSender(Properties properties){
+        this.properties = properties;
+    }
 
-        try{
-            properties = ArgumentReaderUtil.getParams(args);
-        }catch (WrongArgumentException we){
-            we.printStackTrace();
+    @Override
+    public void run() {
+
+        //checking required arguments
+        String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
+
+        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)){
+            System.err.println("Missing required arguments");
             System.exit(0);
         }
 
-        //checking arguments
-        String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
-        for(String s : requiredProperties){
-            if (!properties.containsKey(s)) {
-                System.err.println("Missing required arguments");
-                System.exit(0);
-            }
-        }
 
         //assignation
         String user, port, host, fileLocal;
-        boolean debugging = properties.getProperty("Debugging").equals("1");
+        boolean debugging = properties.getProperty("Debugging").equals("ON");
         user = properties.getProperty("user");
         port = properties.getProperty("port");
         host = properties.getProperty("host");
@@ -71,7 +60,9 @@ public class Sender {
         try{
             JSch jsch=new JSch();
             Session session = jsch.getSession(user, host, Integer.parseInt(port));
-
+            Properties strict = new Properties();
+            strict.put("StrictHostKeyChecking", ConfigurationUtil.getPropertyOrDefault("StrictHostKeyChecking", "yes"));
+            session.setConfig(strict);
             UserInfo ui = new SSH2User(debugging);
             session.setUserInfo(ui);
 
@@ -99,18 +90,18 @@ public class Sender {
 
             }
 
-            SendService[] fileToScp = new SendService[paths.size()];
+            SCPSendService[] fileToScp = new SCPSendService[paths.size()];
             for (int a = 0; a < fileToScp.length; a++){
                 if (debugging) System.out.println("New Thread: mission scp -> " + paths.get(a) + " to " + properties.getProperty("fileRemote"));
-                fileToScp[a] = new SendService(session, properties, paths.get(a),debugging, PathFinderUtil.getPathFileName(paths.get(a)));
+                fileToScp[a] = new SCPSendService(session, properties, paths.get(a),debugging, PathFinderUtil.getPathFileName(paths.get(a)));
                 fileToScp[a].run();
                 if (debugging) System.out.println("Thread running");
             }
 
             try{
-                for (SendService sendService : fileToScp) sendService.join();
+                for (SCPSendService SCPSendService : fileToScp) SCPSendService.join();
             }catch (InterruptedException in){
-                if (debugging) throw new TransferToolException(in.getMessage());
+                if (debugging) in.printStackTrace();
                 else System.err.println("Share subprocess interrupted, data will be corrupt or incomplete!");
                 System.exit(-1);
             }
