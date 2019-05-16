@@ -1,16 +1,13 @@
 package sftpsender;
 
 import com.jcraft.jsch.*;
+import pojos.MyProgressMonitor;
 import pojos.SSH2User;
 import utils.ArgumentReaderUtil;
-import utils.PathFinderUtil;
-import utils.ScannerUtil;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.io.*;
 import java.util.Properties;
+import java.util.Vector;
 
 /**
  * TransferTool
@@ -32,7 +29,7 @@ public class SFTPSender extends Thread {
     public void run(){
 
         //checking required arguments
-        String[] requiredProperties = {"user", "port", "host", "fileLocal"};
+        String[] requiredProperties = {"user", "port", "host"};
 
         if (!ArgumentReaderUtil.isValid(properties, requiredProperties)){
             System.err.println("Missing required arguments");
@@ -40,23 +37,12 @@ public class SFTPSender extends Thread {
         }
 
         //assignation
-        String user, port, host, fileLocal;
+        String user, port, host;
         boolean debugging = properties.getProperty("Debugging").equals("ON");
         user = properties.getProperty("user");
         port = properties.getProperty("port");
         host = properties.getProperty("host");
-        fileLocal = properties.getProperty("fileLocal");
 
-
-        //getting paths array; cleaning it
-        ArrayList<Path> paths = null;
-        try{
-            paths = PathFinderUtil.getCorrectFormat(Path.of(fileLocal), properties);
-        }catch (IOException pe){
-            if (debugging) pe.printStackTrace();
-            else System.err.println("Error on local path");
-            System.exit(0);
-        }
 
         try{
             JSch jsch=new JSch();
@@ -68,21 +54,111 @@ public class SFTPSender extends Thread {
             session.setConfig(strict);
             UserInfo ui = new SSH2User(debugging);
             session.setUserInfo(ui);
+            Channel channel = null;
+            ChannelSftp sftp;
 
-            try{
-                session.connect();
-            }catch(final JSchException jex){
-                if (debugging) jex.printStackTrace();
-                else System.err.println("Incomplete connection");
-                System.exit(-1);
+            session.connect();
+            channel = session.openChannel("sftp");
+            channel.connect();
+            sftp = (ChannelSftp)channel;
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            PrintStream out = System.out;
+
+            int i;
+            String[] line;
+            int level = 0;
+
+            while(true){
+                out.print("sftp>");
+
+                line = in.readLine().split(" ");
+
+                if(line[0].equals("quit") || line[0].equals("exit")){
+                    sftp.quit();
+                    break;
+                }
+                else if(line[0].equals("ls")){
+                    String path = ".";
+                    if(line.length == 2) path = line[1];
+                    try{
+                        Vector vv = sftp.ls(path);
+                        if(vv != null){
+                            for(int ii = 0; ii < vv.size(); ii++){
+                                Object obj = vv.elementAt(ii);
+                                if(obj instanceof com.jcraft.jsch.ChannelSftp.LsEntry) out.println(((com.jcraft.jsch.ChannelSftp.LsEntry)obj).getLongname());
+                            }
+                        }
+                    }
+                    catch(SftpException e){
+                        System.out.println(e.toString());
+                    }
+                }
+                else if(line[0].equals("lls")){
+                    String path=".";
+                    if(line.length == 2) path = line[1];
+                    try{
+                        java.io.File file = new java.io.File(path);
+                        if(!file.exists()) out.println("No such file or directory");
+                        else if(file.isDirectory()){
+                            String[] list=file.list();
+                            assert list != null;
+                            for (String s : list) out.println(s);
+                            continue;
+                        }
+                        out.println(path);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                else if((line[0].equals("cd") || line[0].equals("lcd")) && line.length == 2){
+                    try{
+                        if (line[0].equals("cd")) sftp.cd(line[1]);
+                        else  sftp.lcd(line[1]);
+                    }
+                    catch(SftpException e){
+                        System.out.println(e.toString());
+                    }
+                }
+                else if((line[0].equals("rm") || line[0].equals("rmdir") || line[0].equals("mkdir")) && line.length == 2){
+                    try{
+                        if(line[0].equals("rm")) sftp.rm(line[1]);
+                        else if(line[0].equals("rmdir")) sftp.rmdir(line[1]);
+                        else sftp.mkdir(line[1]);
+                    }
+                    catch(SftpException e){
+                        System.out.println(e.toString());
+                    }
+                }
+                else if((line[0].equals("get") || line[0].equals("put")) && (line.length == 2 || line.length == 3)){
+                    String p1 = line[1];
+                    String p2=".";
+                    if(line.length == 3) p2 = line[2];
+                    try{
+                        MyProgressMonitor monitor = new MyProgressMonitor();
+                        if(line[0].equals("get")){
+                            int mode = ChannelSftp.OVERWRITE;
+                            sftp.get(p1, p2, monitor, mode);
+                        }
+                        else{
+                            int mode = ChannelSftp.OVERWRITE;
+                            sftp.put(p1, p2, monitor, mode);
+                        }
+                    }
+                    catch(SftpException e){
+                        System.out.println(e.toString());
+                    }
+                }
+
             }
 
-            System.out.println("connected");
             session.disconnect();
 
-        }catch (JSchException e){
+
+        }catch (JSchException | IOException e){
             if (debugging)e.printStackTrace();
-            else System.err.println("Transfer failed");
+            else System.err.println("Fatal Error");
             System.exit(-1);
         }
     }

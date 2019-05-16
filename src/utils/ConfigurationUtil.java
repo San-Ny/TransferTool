@@ -65,7 +65,8 @@ public class ConfigurationUtil {
                     "Debugging:OFF",
                     "Method:ssh",
                     "#StrictHostKeyChecking [yes], [no], [default]",
-                    "StrictHostKeyChecking:default"
+                    "StrictHostKeyChecking:default",
+                    "ChannelSftp:OVERWRITE"
             };
             File confFile = new File(CONFIGFILE);
 
