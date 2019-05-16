@@ -7,7 +7,6 @@ import utils.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Properties;
 
 /**
@@ -61,7 +60,9 @@ public class SCPSender extends Thread {
             JSch jsch=new JSch();
             Session session = jsch.getSession(user, host, Integer.parseInt(port));
             Properties strict = new Properties();
-            strict.put("StrictHostKeyChecking", ConfigurationUtil.getPropertyOrDefault("StrictHostKeyChecking", "yes"));
+            if (properties.getProperty("StrictHostKeyChecking").equals("no")) strict.put("StrictHostKeyChecking", "no");
+            else if (properties.getProperty("StrictHostKeyChecking").equals("yes")) strict.put("StrictHostKeyChecking", "yes");
+            else if (debugging) System.out.println("StrictHostKeyChecking disabled");
             session.setConfig(strict);
             UserInfo ui = new SSH2User(debugging);
             session.setUserInfo(ui);
@@ -69,25 +70,9 @@ public class SCPSender extends Thread {
             try{
                 session.connect();
             }catch(final JSchException jex){
-                try{
-                    if (ScannerUtil.getVerboseInput("Trust this host with fingerprint: " + session.getHostKey().getFingerPrint(jsch) + " [Y/n]: ")){
-                        byte [] key = Base64.getDecoder().decode ( session.getHostKey().getKey());
-                        HostKey hostKey = new HostKey(session.getHost(), key);
-                        jsch.getHostKeyRepository().add (hostKey, null );
-                    }
-                }catch (NullPointerException nullPointer){
-                    System.err.println("Host unreachable");
-                    System.exit(0);
-                }
-
-                try{
-                    session.connect(2000);
-                }catch (JSchException end){
-                    if (debugging) end.printStackTrace();
-                    else System.err.println("There's no common cipher to choose from.\n\tIs Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed??");
-                    System.exit(0);
-                }
-
+                if (debugging) jex.printStackTrace();
+                else System.err.println("Incomplete connection");
+                System.exit(-1);
             }
 
             SCPSendService[] fileToScp = new SCPSendService[paths.size()];

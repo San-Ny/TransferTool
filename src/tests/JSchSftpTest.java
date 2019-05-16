@@ -1,6 +1,7 @@
 package tests;
 
 import com.jcraft.jsch.*;
+import pojos.SSH2User;
 
 import java.util.Properties;
 
@@ -11,9 +12,9 @@ public class JSchSftpTest {
         Session session = null;
         try {
             session = jsch.getSession("grdar", "192.168.1.203", 22); //default port is 22
-            UserInfo ui = new MyUserInfo();
+            UserInfo ui = new SSH2User(true);
             Properties properties = new Properties();
-            properties.put("StrictHostKeyChecking", "no");
+            properties.put("StrictHostKeyChecking", "yes");
             session.setConfig(properties);
             session.setUserInfo(ui);
             session.setPassword("grdar".getBytes());
@@ -28,44 +29,6 @@ public class JSchSftpTest {
         } finally {
             session.disconnect();
             System.out.println("Disconnected");
-        }
-    }
-
-    public static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
-
-        @Override
-        public String getPassphrase() {
-            return null;
-        }
-
-        @Override
-        public String getPassword() {
-            return null;
-        }
-
-        @Override
-        public boolean promptPassphrase(String arg0) {
-            return false;
-        }
-
-        @Override
-        public boolean promptPassword(String arg0) {
-            return false;
-        }
-
-        @Override
-        public boolean promptYesNo(String arg0) {
-            return false;
-        }
-
-        @Override
-        public void showMessage(String arg0) {
-        }
-
-        @Override
-        public String[] promptKeyboardInteractive(String arg0, String arg1,
-                                                  String arg2, String[] arg3, boolean[] arg4) {
-            return null;
         }
     }
 }

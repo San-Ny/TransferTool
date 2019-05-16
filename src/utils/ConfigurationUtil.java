@@ -64,8 +64,8 @@ public class ConfigurationUtil {
                     "FTPSRemotePort:21",
                     "Debugging:OFF",
                     "Method:ssh",
-                    "#verify Host Key? [yes], [no] ()",
-                    "StrictHostKeyChecking:yes"
+                    "#StrictHostKeyChecking [yes], [no], [default]",
+                    "StrictHostKeyChecking:default"
             };
             File confFile = new File(CONFIGFILE);
 

@@ -175,8 +175,8 @@ public class PathFinderUtil {
      */
     public static ArrayList<Path> getCorrectFormat(Path path, Properties properties) throws IOException{
         boolean recursive = false, verbose = false;
-        if (properties.containsKey("recursive") && properties.getProperty("recursive").equals("1")) recursive = true;
-        if (properties.containsKey("verbose") && properties.getProperty("verbose").equals("1")) verbose = true;
+        if (properties.containsKey("Recursive") && properties.getProperty("Recursive").equals("1")) recursive = true;
+        if (properties.containsKey("Verbose") && properties.getProperty("Verbose").equals("1")) verbose = true;
         if (hasAsterisk(path.toString())) {
             recursive = true;
             path = Path.of(removeAsterisk(path.toString()));

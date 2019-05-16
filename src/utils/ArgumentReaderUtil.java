@@ -19,23 +19,28 @@ public class ArgumentReaderUtil {
      */
     public static Properties getParams(String[] args) throws WrongArgumentException {
 
-        //-u user
-        //-p port
-        //-R host
-        //-r recursive
-        //-s strict mode ------------------
-        //-t generates new dir on remote host
-        //-v verbose
-        //-d debugging
-        //-W host:port
-        //-J [user@]host[:port]
-        //-fl files local
-        //-fr files remote
-        //-ssh via ssh
-        //-sftp via sftp
+        //-ssh [null] <Use SSH scp>
+        //-sftp [null] <Use SFTP>
+        //-cluster [null] <exec/shell on multiple SSH connections simultaneously>
+        //-shell [null] <Get shell>
 
-        if (args.length < 4) {
-            System.out.println("Invalid arguments.");
+        //-u [user] <SSH/SFTP/Shell/Cluster User>
+        //-p [port] <SSH/SFTP/Shell/Cluster Port>
+        //-R [host] <SSH/SFTP/Shell/Cluster url/ip>
+        //-r [null] <Recursive>
+        //-s [null] <strict mode on>
+        //-w [null] <strict mode off>
+        //-t [null] <generates new dir on remote host>
+        //-v [null] <Verbose>
+        //-d [null] <Debugging>
+        //-W [host:]port <SSH/SFTP/Shell/Cluster User:Port>
+        //-J [user@]host[:port] <SSH/SFTP/Shell/Cluster User@host:port>
+        //-fl [path] local <Local directory>
+        //-fr [path] <Remote directory>
+
+
+        if (args.length < 1) {
+            System.err.println("Null arguments");
             System.exit(0);
         }
 
@@ -54,6 +59,10 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-fr")) properties.put("fileRemote",args[++a]);
             else if (args[a].equals("-ssh")) properties.put("Method", "ssh");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
+            else if (args[a].equals("-cluster")) properties.put("Method", "cluster");
+            else if (args[a].equals("-shell")) properties.put("Method", "shell");
+            else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");
+            else if (args[a].equals("-w")) properties.put("StrictHostKeyChecking", "no");
             else if (args[a].equals("-W")){
                 String[] hpCommand = args[++a].split(":");
                 if (hpCommand.length != 2) throw new WrongArgumentException("Wrong parameter on arguments:\n\t-W host[:port]");
@@ -66,13 +75,13 @@ public class ArgumentReaderUtil {
                 properties.put("host",hpCommand[1]);
                 properties.put("port",hpCommand[2]);
             }else if (args[a].equals("-u")) properties.put("user",args[++a]);
-            else if (args[a].equals("-r"))  properties.put("recursive", "1");
-            else if (args[a].equals("-v"))  properties.put("verbose", "1");
+            else if (args[a].equals("-r"))  properties.put("Recursive", "1");
+            else if (args[a].equals("-v"))  properties.put("Verbose", "1");
             else if (args[a].equals("-d"))  properties.put("Debugging", "ON");
             else{
                 properties.put("Debugging","OFF");
-                properties.put("recursive", "0");
-                properties.put("verbose", "0");
+                properties.put("Recursive", "0");
+                properties.put("Verbose", "0");
                 if (a == 0) properties.put("fileLocal",args[a]);
                 else if (a == 1){
                     String[] hpCommand = args[a].split("[@:]");
