@@ -82,10 +82,10 @@ public class SFTPSender extends Thread {
                     String path = ".";
                     if(line.length == 2) path = line[1];
                     try{
-                        Vector vv = sftp.ls(path);
-                        if(vv != null){
-                            for(int ii = 0; ii < vv.size(); ii++){
-                                Object obj = vv.elementAt(ii);
+                        Vector vector = sftp.ls(path);
+                        if(vector != null){
+                            for(int c = 0; c < vector.size(); c++){
+                                Object obj = vector.elementAt(c);
                                 if(obj instanceof com.jcraft.jsch.ChannelSftp.LsEntry) out.println(((com.jcraft.jsch.ChannelSftp.LsEntry)obj).getLongname());
                             }
                         }

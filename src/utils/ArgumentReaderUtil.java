@@ -37,6 +37,9 @@ public class ArgumentReaderUtil {
         //-J [user@]host[:port] <SSH/SFTP/Shell/Cluster User@host:port>
         //-fl [path] local <Local directory>
         //-fr [path] <Remote directory>
+        //-up [path]:[path] <Upload local file path to remote path>
+        //-gt [path]:[path] <Download remote file path to local file path>
+        // -h [null] <Help message>
 
 
         if (args.length < 1) {
@@ -61,6 +64,7 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
             else if (args[a].equals("-cluster")) properties.put("Method", "cluster");
             else if (args[a].equals("-shell")) properties.put("Method", "shell");
+            else if (args[a].equals("-h")) printHelp();
             else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");
             else if (args[a].equals("-w")) properties.put("StrictHostKeyChecking", "no");
             else if (args[a].equals("-W")){
@@ -94,9 +98,48 @@ public class ArgumentReaderUtil {
             }
         }
 
-        if (properties.getProperty("Debugging").equals("1")) properties.forEach((k, v) -> System.out.println("ArgumentReaderUtil -> " + k + ":" + v));
+        if (properties.getProperty("Debugging").equals("ON")) properties.forEach((k, v) -> ConsolePrinterUtil.printDebugging(ArgumentReaderUtil.class,k + ":" + v, Thread.currentThread().getStackTrace()[1].getLineNumber()));
 
         return properties;
+    }
+
+    private static void printHelp() {
+        String message = "\n\n" +
+                "\t\t ______________         ______________ \n" +
+                "\t\t|_____    _____|       |_____    _____|\n" +
+                "\t\t      |  |                   |  |      \n" +
+                "\t\t      |  |                   |  |      \n" +
+                "\t\t      |  |                   |  |      \n" +
+                "\t\t      |  |                   |  |      \n" +
+                "\t\t      |  |                   |  |      \n" +
+                "\t\t      |__|                   |__|      \n" +
+                "\n\n\t\t TransferTool by San-Ny\n\n\nAvailable parameters:\n\n" +
+                "Method to transfer files:\n" +
+                "\t-ssh [null] <Use SSH scp>\n" +
+                "\t-sftp [null] <Use SFTP>\n" +
+                "\t-cluster [null] <exec/shell on multiple SSH connections simultaneously>\n" +
+                "\t-shell [null] <Get shell>\n" +
+                "\n" +
+                "Available arguments, usage depends of method:\n" +
+                "\t-u [user] <SSH/SFTP/Shell/Cluster User>\n" +
+                "\t-p [port] <SSH/SFTP/Shell/Cluster Port>\n" +
+                "\t-R [host] <SSH/SFTP/Shell/Cluster url/ip>\n" +
+                "\t-r [null] <Recursive>\n" +
+                "\t-s [null] <strict mode on>\n" +
+                "\t-w [null] <strict mode off>\n" +
+                "\t-t [null] <generates new dir on remote host>\n" +
+                "\t-v [null] <Verbose>\n" +
+                "\t-d [null] <Debugging>\n" +
+                "\t-W [host:]port <SSH/SFTP/Shell/Cluster User:Port>\n" +
+                "\t-J [user@]host[:port] <SSH/SFTP/Shell/Cluster User@host:port>\n" +
+                "\t-fl [path] local <Local directory>\n" +
+                "\t-fr [path] <Remote directory>\n" +
+                "\t-up [path]:[path] <Upload local file path to remote path>\n" +
+                "\t-gt [path]:[path] <Download remote file path to local file path>\n" +
+                "\t-h [null] <Help message>";
+
+        ConsolePrinterUtil.println(message);
+        System.exit(0);
     }
 
     /**

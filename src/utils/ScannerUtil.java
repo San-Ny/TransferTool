@@ -27,7 +27,7 @@ public class ScannerUtil {
      * @return String with the input
      */
     public static String getLine(String msg){
-        System.out.print(msg);
+        ConsolePrinterUtil.println(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
