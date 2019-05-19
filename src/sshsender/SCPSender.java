@@ -57,15 +57,7 @@ public class SCPSender extends Thread {
         }
 
         try{
-            JSch jsch=new JSch();
-            Session session = jsch.getSession(user, host, Integer.parseInt(port));
-            Properties strict = new Properties();
-            if (properties.getProperty("StrictHostKeyChecking").equals("no")) strict.put("StrictHostKeyChecking", "no");
-            else if (properties.getProperty("StrictHostKeyChecking").equals("yes")) strict.put("StrictHostKeyChecking", "yes");
-            else if (debugging) System.out.println("StrictHostKeyChecking disabled");
-            session.setConfig(strict);
-            UserInfo ui = new SSH2User(debugging);
-            session.setUserInfo(ui);
+            Session session = SSH2User.sshUser(user, port, host, debugging, properties);
 
             try{
                 session.connect();

@@ -56,15 +56,15 @@ public class ArgumentReaderUtil {
 
         //read arguments and overwrite def parameters
         for (int a = 0; a < args.length; a++){
-            if (args[a].equals("-R")) properties.put("host",args[++a]);
-            else if (args[a].equals("-p")) properties.put("port",args[++a]);
+            if (args[a].equals("-R") || args[a].equals("--host")) properties.put("host",args[++a]);
+            else if (args[a].equals("-p") || args[a].equals("--port")) properties.put("port",args[++a]);
             else if (args[a].equals("-fl")) properties.put("fileLocal",args[++a]);
             else if (args[a].equals("-fr")) properties.put("fileRemote",args[++a]);
             else if (args[a].equals("-ssh")) properties.put("Method", "ssh");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
             else if (args[a].equals("-cluster")) properties.put("Method", "cluster");
             else if (args[a].equals("-shell")) properties.put("Method", "shell");
-            else if (args[a].equals("-h")) printHelp();
+            else if (args[a].equals("-h") || args[a].equals("--help")) printHelp();
             else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");
             else if (args[a].equals("-w")) properties.put("StrictHostKeyChecking", "no");
             else if (args[a].equals("-W")){
@@ -78,10 +78,10 @@ public class ArgumentReaderUtil {
                 properties.put("user",hpCommand[0]);
                 properties.put("host",hpCommand[1]);
                 properties.put("port",hpCommand[2]);
-            }else if (args[a].equals("-u")) properties.put("user",args[++a]);
-            else if (args[a].equals("-r"))  properties.put("Recursive", "1");
-            else if (args[a].equals("-v"))  properties.put("Verbose", "1");
-            else if (args[a].equals("-d"))  properties.put("Debugging", "ON");
+            }else if (args[a].equals("-u") || args[a].equals("--user")) properties.put("user",args[++a]);
+            else if (args[a].equals("-r") || args[a].equals("--recursive"))  properties.put("Recursive", "1");
+            else if (args[a].equals("-v") || args[a].equals("--verbose"))  properties.put("Verbose", "1");
+            else if (args[a].equals("-d") || args[a].equals("--debugging"))  properties.put("Debugging", "ON");
             else{
                 properties.put("Debugging","OFF");
                 properties.put("Recursive", "0");
@@ -121,22 +121,23 @@ public class ArgumentReaderUtil {
                 "\t-shell [null] <Get shell>\n" +
                 "\n" +
                 "Available arguments, usage depends of method:\n" +
-                "\t-u [user] <SSH/SFTP/Shell/Cluster User>\n" +
-                "\t-p [port] <SSH/SFTP/Shell/Cluster Port>\n" +
-                "\t-R [host] <SSH/SFTP/Shell/Cluster url/ip>\n" +
-                "\t-r [null] <Recursive>\n" +
-                "\t-s [null] <strict mode on>\n" +
-                "\t-w [null] <strict mode off>\n" +
-                "\t-t [null] <generates new dir on remote host>\n" +
-                "\t-v [null] <Verbose>\n" +
-                "\t-d [null] <Debugging>\n" +
-                "\t-W [host:]port <SSH/SFTP/Shell/Cluster User:Port>\n" +
-                "\t-J [user@]host[:port] <SSH/SFTP/Shell/Cluster User@host:port>\n" +
-                "\t-fl [path] local <Local directory>\n" +
-                "\t-fr [path] <Remote directory>\n" +
-                "\t-up [path]:[path] <Upload local file path to remote path>\n" +
-                "\t-gt [path]:[path] <Download remote file path to local file path>\n" +
-                "\t-h [null] <Help message>";
+                "\t--command\t\t\t\t[parameters]\t\t<description>\n" +
+                "\t-u\tor --user\t\t\t[user]\t\t\t\t<SSH/SFTP/Shell/Cluster User>\n" +
+                "\t-p\tor --port\t\t\t[port]\t\t\t\t<SSH/SFTP/Shell/Cluster Port>\n" +
+                "\t-R\tor --host\t\t\t[host]\t\t\t\t<SSH/SFTP/Shell/Cluster url/ip>\n" +
+                "\t-r\tor --recursive\t\t\t\t\t\t\t<Recursive>\n" +
+                "\t-s\tor --strict\t\t\t\t\t\t\t\t<strict mode on>\n" +
+                "\t-w\tor --unstrict\t\t\t\t\t\t\t<strict mode off>\n" +
+                "\t-t\t\t\t\t\t\t\t\t\t\t\t<generates new dir on remote host>\n" +
+                "\t-v\tor --verbose\t\t\t\t\t\t\t<Verbose>\n" +
+                "\t-d\tor --debugging\t\t\t\t\t\t\t<Debugging>\n" +
+                "\t-W\t\t\t\t\t\t[host:]port\t\t\t<SSH/SFTP/Shell/Cluster User:Port>\n" +
+                "\t-J\t\t\t\t\t\t[user@]host[:port]\t<SSH/SFTP/Shell/Cluster User@host:port>\n" +
+                "\t-fl\tor --filelocal\t\t[path]\t\t\t\t<Local directory>\n" +
+                "\t-fr\tor --fileremote\t\t[path]\t\t\t\t<Remote directory>\n" +
+                "\t-up\tor --upload\t\t\t[path]:[path]\t\t<Upload local file path to remote path>\n" +
+                "\t-gt\tor --download\t\t[path]:[path]\t\t<Download remote file path to local file path>\n" +
+                "\t-h\tor --help\t\t\t\t\t\t\t\t<Help message>";
 
         ConsolePrinterUtil.println(message);
         System.exit(0);
@@ -153,6 +154,12 @@ public class ArgumentReaderUtil {
         return true;
     }
 
+    /**
+     * check if one of the requested parameters is present
+     * @param properties properties to check
+     * @param requiredValues array with keys to check
+     * @return return true if present else false
+     */
     public static boolean isOneValid(Properties properties, String[] requiredValues){
         for(String s : requiredValues) if (properties.containsKey(s)) return true;
         return false;

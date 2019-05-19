@@ -3,6 +3,7 @@ package sftpsender;
 import com.jcraft.jsch.*;
 import pojos.MyProgressMonitor;
 import pojos.SSH2User;
+import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
 
 import java.io.*;
@@ -45,15 +46,7 @@ public class SFTPSender extends Thread {
 
 
         try{
-            JSch jsch=new JSch();
-            Session session = jsch.getSession(user, host, Integer.parseInt(port));
-            Properties strict = new Properties();
-            if (properties.getProperty("StrictHostKeyChecking").equals("no")) strict.put("StrictHostKeyChecking", "no");
-            else if (properties.getProperty("StrictHostKeyChecking").equals("yes")) strict.put("StrictHostKeyChecking", "yes");
-            else if (debugging) System.out.println("StrictHostKeyChecking disabled");
-            session.setConfig(strict);
-            UserInfo ui = new SSH2User(debugging);
-            session.setUserInfo(ui);
+            Session session = SSH2User.sshUser(user, port, host, debugging, properties);
             Channel channel = null;
             ChannelSftp sftp;
 
