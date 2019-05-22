@@ -1,5 +1,7 @@
 package utils;
 
+import com.jcraft.jsch.Session;
+
 public class ConsolePrinterUtil {
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -28,8 +30,26 @@ public class ConsolePrinterUtil {
         System.out.format("%s[%s%s%s line %s%d%s]%s: %s\n",ANSI_YELLOW, ANSI_BLUE, who.getName(), ANSI_RESET, ANSI_RED, line, ANSI_YELLOW, ANSI_RESET, msg);
     }
 
+    /**
+     *
+     * @param msg
+     * @param status
+     */
     public static void die(String msg, int status){
         System.err.println(msg);
+        System.exit(status);
+    }
+    public static void die(Class who, Session session, String msg, int status){
+        session.disconnect();
+        printClassInfo(who, msg);
+        System.exit(status);
+    }
+    public static void die(Class who, String msg, int status){
+        printClassInfo(who, msg);
+        System.exit(status);
+    }
+    public static void die(Class who, String msg, int status, int line){
+        printDebugging(who, msg, line);
         System.exit(status);
     }
 }

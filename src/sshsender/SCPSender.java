@@ -31,10 +31,7 @@ public class SCPSender extends Thread {
         //checking required arguments
         String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
 
-        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)){
-            System.err.println("Missing required arguments");
-            System.exit(0);
-        }
+        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)) ConsolePrinterUtil.die(SCPSender.class,"Missing required arguments", 0);
 
 
         //assignation
@@ -51,9 +48,8 @@ public class SCPSender extends Thread {
         try{
             paths = PathFinderUtil.getCorrectFormat(Path.of(fileLocal), properties);
         }catch (IOException pe){
-            if (debugging) pe.printStackTrace();
-            else System.err.println("Error on local path");
-            System.exit(0);
+            if (debugging) ConsolePrinterUtil.die(SCPSender.class, pe.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else ConsolePrinterUtil.die(SCPSender.class,"Error on local path", 0);
         }
 
         try{
@@ -62,35 +58,33 @@ public class SCPSender extends Thread {
             try{
                 session.connect();
             }catch(final JSchException jex){
-                if (debugging) jex.printStackTrace();
-                else System.err.println("Incomplete connection");
-                System.exit(-1);
+                if (debugging) ConsolePrinterUtil.die(SCPSender.class, jex.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+                else ConsolePrinterUtil.die(SCPSender.class,"Connection failed", -1);
             }
 
-            SCPSendService[] fileToScp = new SCPSendService[paths.size()];
+            SCPSendService[] fileToScp = new SCPSendService[0];
+            if (paths != null) fileToScp = new SCPSendService[paths.size()];
+            else ConsolePrinterUtil.die(SCPSender.class,"Null path" ,0);
             for (int a = 0; a < fileToScp.length; a++){
-                if (debugging) System.out.println("New Thread: mission scp -> " + paths.get(a) + " to " + properties.getProperty("fileRemote"));
+                if (debugging)ConsolePrinterUtil.printDebugging(SCPSender.class, "New Thread: mission scp -> " + paths.get(a) + " to " + properties.getProperty("fileRemote"), Thread.currentThread().getStackTrace()[1].getLineNumber());
                 fileToScp[a] = new SCPSendService(session, properties, paths.get(a),debugging, PathFinderUtil.getPathFileName(paths.get(a)));
                 fileToScp[a].run();
-                if (debugging) System.out.println("Thread running");
+                if (debugging) ConsolePrinterUtil.printClassInfo(SCPSender.class,"Thread running");
             }
 
             try{
                 for (SCPSendService SCPSendService : fileToScp) SCPSendService.join();
             }catch (InterruptedException in){
-                if (debugging) in.printStackTrace();
-                else System.err.println("Share subprocess interrupted, data will be corrupt or incomplete!");
-                System.exit(-1);
+                if (debugging) ConsolePrinterUtil.die(SCPSender.class, in.getMessage(), -1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+                else ConsolePrinterUtil.die(SCPSender.class, "Share subprocess interrupted, data will be corrupt or incomplete!", -1);
             }
 
-            if (fileLocal.length() != 1) System.out.println("All files transferred");
-            else System.out.println("File transferred");
-            session.disconnect();
-            System.exit(0);
+            if (fileLocal.length() != 1) ConsolePrinterUtil.die(SCPSender.class, session, "All files transferred", 0);
+            else ConsolePrinterUtil.die(SCPSender.class, "File transferred", 0);
 
         }catch (JSchException e){
-            if (debugging)e.printStackTrace();
-            else System.err.println("Transfer failed");
+            if (debugging)ConsolePrinterUtil.printDebugging(SCPSender.class, e.getMessage(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else ConsolePrinterUtil.die(SCPSender.class,"Transfer failed", 0);
         }
     }
 }

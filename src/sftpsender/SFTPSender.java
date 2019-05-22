@@ -3,7 +3,6 @@ package sftpsender;
 import com.jcraft.jsch.*;
 import pojos.MyProgressMonitor;
 import pojos.SSH2User;
-import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
 
 import java.io.*;
