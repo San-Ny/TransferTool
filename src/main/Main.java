@@ -5,12 +5,15 @@ import sftpsender.SFTPSender;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
 import utils.ConfigurationUtil;
+import utils.ConsolePrinterUtil;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
+
+        if (args.length == 0) ConsolePrinterUtil.println("Missing arguments, use -h or --help for help message");
         Properties properties = null;
 
         try{
