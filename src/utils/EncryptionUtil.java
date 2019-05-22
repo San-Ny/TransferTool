@@ -12,7 +12,7 @@ import java.security.spec.MGF1ParameterSpec;
  * @author JavaDigest
  *
  */
-public class EncriptionUtil {
+public class EncryptionUtil {
     /**
      * String to hold name of the encryption algorithm.
      * keys can be stored in software, create a static final variable for PublicKey and PrivateKey (instead of String) and use it.

@@ -1,6 +1,6 @@
 package tests;
 
-import utils.EncriptionUtil;
+import utils.EncryptionUtil;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -12,24 +12,24 @@ public class Test {
 
         try{
             // Check if the pair of keys are present else generate those.
-            if (!EncriptionUtil.areKeysPresent()) {
+            if (!EncryptionUtil.areKeysPresent()) {
                 // Method generates a pair of keys using the RSA algorithm and stores it
                 // in their respective files
-                EncriptionUtil.generateKey();
+                EncryptionUtil.generateKey();
             }
 
             final String originalText = "Text to be encrypted ";
             ObjectInputStream inputStream = null;
 
             // Encrypt the string using the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_FILE));
             final PublicKey publicKey = (PublicKey) inputStream.readObject();
-            final byte[] cipherText = EncriptionUtil.encrypt(originalText, publicKey);
+            final byte[] cipherText = EncryptionUtil.encrypt(originalText, publicKey);
 
             // Decrypt the cipher text using the private key.
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_FILE));
             final PrivateKey privateKey = (PrivateKey) inputStream.readObject();
-            final String plainText = EncriptionUtil.decrypt(cipherText, privateKey);
+            final String plainText = EncryptionUtil.decrypt(cipherText, privateKey);
 
             // Printing the Original, Encrypted and Decrypted Text
             System.out.println("Original Text: " + originalText);

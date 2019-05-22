@@ -1,6 +1,6 @@
 package tests;
 
-import utils.EncriptionUtil;
+import utils.EncryptionUtil;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -14,17 +14,17 @@ public class TestEncriptionUtil {
         RSAPrivateKey privateKey = null;
         try{
             // generates the keys if not eists
-            if (!EncriptionUtil.areKeysPresent()) EncriptionUtil.generateKey();
+            if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
 
             //key file reader
             ObjectInputStream inputStream;
 
             // gets the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PUBLIC_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_FILE));
             publicKey = (RSAPublicKey) inputStream.readObject();
 
             // gets the private key
-            inputStream = new ObjectInputStream(new FileInputStream(EncriptionUtil.PRIVATE_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_FILE));
             privateKey = (RSAPrivateKey) inputStream.readObject();
 
         }catch (Exception e){
@@ -32,9 +32,9 @@ public class TestEncriptionUtil {
             System.exit(-1);
         }
 
-        byte[] encripted = EncriptionUtil.encrypt("cactus",publicKey);
+        byte[] encripted = EncryptionUtil.encrypt("cactus",publicKey);
 
-        System.out.println(EncriptionUtil.decrypt(encripted, privateKey));
+        System.out.println(EncryptionUtil.decrypt(encripted, privateKey));
 
     }
 }

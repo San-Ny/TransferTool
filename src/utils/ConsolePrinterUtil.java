@@ -27,4 +27,9 @@ public class ConsolePrinterUtil {
     public static void printDebugging(Class who, String msg, int line){
         System.out.format("%s[%s%s%s line %s%d%s]%s: %s\n",ANSI_YELLOW, ANSI_BLUE, who.getName(), ANSI_RESET, ANSI_RED, line, ANSI_YELLOW, ANSI_RESET, msg);
     }
+
+    public static void die(String msg, int status){
+        System.err.println(msg);
+        System.exit(status);
+    }
 }
