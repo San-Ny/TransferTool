@@ -6,6 +6,7 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import exceptions.TransferToolException;
+import utils.ConsolePrinterUtil;
 import utils.PathFinderUtil;
 
 import java.io.*;
@@ -63,7 +64,7 @@ public class SCPSendService extends Thread {
             Channel channel = session.openChannel("exec");
             ((ChannelExec)channel).setCommand(command);
 
-            if (debugging) System.out.println("Channel created on session!");
+            if (debugging) ConsolePrinterUtil.printClassInfo(SCPSendService.class,"Channel created on session!");
 
             BufferedInputStream in = null;
             BufferedOutputStream out = null;
@@ -71,8 +72,8 @@ public class SCPSendService extends Thread {
                 out = new BufferedOutputStream(channel.getOutputStream());
                 in = new BufferedInputStream(channel.getInputStream());
             }catch (IOException ioe){
-                if (debugging)ioe.printStackTrace();
-                else System.err.println("Broken Streams");
+                if (debugging) ConsolePrinterUtil.printDebugging(SCPSendService.class, ioe.getMessage(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+                else ConsolePrinterUtil.printClassInfo(SCPSendService.class,"Broken Streams");
                 System.exit(0);
             }
 
@@ -122,10 +123,10 @@ public class SCPSendService extends Thread {
 
             out.close();
             channel.disconnect();
-            if (debugging) System.out.println("File transferred");
+            if (debugging) ConsolePrinterUtil.printDebugging(SCPSendService.class, "File transferred", Thread.currentThread().getStackTrace()[1].getLineNumber());
         }catch (JSchException | IOException | TransferToolException e){
-            if (debugging) e.printStackTrace();
-            else System.err.println("Error sending file");
+            if (debugging) ConsolePrinterUtil.printDebugging(SCPSendService.class, e.getMessage(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else ConsolePrinterUtil.printClassInfo(SCPSendService.class,"Error sending file");
             System.exit(-1);
         }
     }
