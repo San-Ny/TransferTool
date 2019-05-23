@@ -34,7 +34,7 @@ public class SCPSender extends Thread {
         //checking required arguments
         String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
 
-        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)) die(SCPSender.class,"Missing required arguments", 0);
+        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)) die(SCPSender.class,"Missing required arguments", 0);
 
 
         //assignation

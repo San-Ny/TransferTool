@@ -1,6 +1,8 @@
 package utils;
 
 import exceptions.WrongArgumentException;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Properties;
 
 /**
@@ -17,7 +19,7 @@ public class ArgumentReaderUtil {
      * @return Properties with the arguments inserted
      * @throws WrongArgumentException if arguments are invalid or bad filled
      */
-    public static Properties getParams(String[] args) throws WrongArgumentException {
+    public static Properties getParams(@NotNull String[] args) throws WrongArgumentException {
 
         //-scp [null] <Use SSH scp>
         //-sftp [null] <Use SFTP>
@@ -111,9 +113,9 @@ public class ArgumentReaderUtil {
      * @param requiredValues Array of required values
      * @return return if properties document is valid or not
      */
-    public static boolean isValid(Properties properties, String[] requiredValues){
-        for(String s : requiredValues) if (!properties.containsKey(s)) return false;
-        return true;
+    public static boolean isNotValid(Properties properties, String[] requiredValues){
+        for(String s : requiredValues) if (!properties.containsKey(s)) return true;
+        return false;
     }
 
     /**

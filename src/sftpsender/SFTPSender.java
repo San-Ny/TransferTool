@@ -31,7 +31,7 @@ public class SFTPSender extends Thread {
         //checking required arguments
         String[] requiredProperties = {"user", "port", "host"};
 
-        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)){
+        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)){
             System.err.println("Missing required arguments");
             System.exit(0);
         }

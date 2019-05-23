@@ -23,7 +23,7 @@ public class SecureShell extends Thread {
 //        super.run();
         String[] requiredProperties = {"user", "host"};
 
-        if (!ArgumentReaderUtil.isValid(properties, requiredProperties)) ConsolePrinterUtil.die(SCPSender.class,"Missing required arguments", 0);
+        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)) ConsolePrinterUtil.die(SCPSender.class,"Missing required arguments", 0);
 
         //assignation
         String user, port, host;
