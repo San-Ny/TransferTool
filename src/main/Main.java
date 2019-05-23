@@ -6,30 +6,61 @@ import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
 import utils.ConfigurationUtil;
 import utils.ConsolePrinterUtil;
+import utils.ScannerUtil;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
 
-        if (args.length == 0) ConsolePrinterUtil.println("Missing arguments, use -h or --help for help message");
-        Properties properties = null;
+        Properties properties = new Properties();
 
-        try{
-            properties = ArgumentReaderUtil.getParams(args);
-        }catch (WrongArgumentException we){
-            if(ConfigurationUtil.getPropertyOrDefault("Debugger", "ON").equals("OFF")) we.printStackTrace();
-            else System.err.println("Error reading arguments, Enable Debugger on TransferTool.conf");
-            System.exit(0);
+        if (args.length == 0) {
+            ConsolePrinterUtil.println(ConsolePrinterUtil.header);
+            String line;
+            while (true){
+                line = ScannerUtil.getLine(ConsolePrinterUtil.getCommandInput());
+                if (line.equals("exit") || line.equals("quit")) ConsolePrinterUtil.die("bye", 0);
+                else if (line.equals("help")) ConsolePrinterUtil.printLiveHelp();
+                else if (line.equals("scp")) {
+                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                    properties = getPropertiesFromArgs(args);
+                    if (properties != null) properties.put("Method", "scp");
+                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    break;
+                }else if (line.equals("sftp")) {
+                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                    properties = getPropertiesFromArgs(args);
+                    if (properties != null) properties.put("Method", "sftp");
+                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    break;
+                }
+                else if (line.equals("shell")) {
+                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                    properties = getPropertiesFromArgs(args);
+                    if (properties != null) properties.put("Method", "shell");
+                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    break;
+                }
+                else if (line.equals("cluster")) {
+                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                    properties = getPropertiesFromArgs(args);
+                    if (properties != null) properties.put("Method", "cluster");
+                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    break;
+                }
+            }
         }
 
-        String[] required = {"ssh", "sftp"};
-        if (ArgumentReaderUtil.isOneValid(properties, required)){
-            System.err.println("Method required; use -ssh or -sftp on arguments to define one");
-        }
 
-        if (properties.getProperty("Method").equals("ssh")){
+
+//            String[] required = {"scp", "sftp"};
+//            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -cluster on arguments to define one", 0);
+
+        if (properties == null) System.exit(-1);
+        if (!properties.contains("Method")) ConsolePrinterUtil.die("method not defined", -1);
+
+        if (properties.getProperty("Method").equals("scp")){
             SCPSender scpSender = new SCPSender(properties);
             scpSender.run();
 
@@ -49,5 +80,16 @@ public class Main {
             }
         }
 
+    }
+
+    private static Properties getPropertiesFromArgs(String[] args){
+        try{
+            return ArgumentReaderUtil.getParams(args);
+        }catch (WrongArgumentException we){
+            if(ConfigurationUtil.getPropertyOrDefault("Debugger", "ON").equals("OFF"))
+                ConsolePrinterUtil.die(SCPSender.class, we.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else ConsolePrinterUtil.die("Error reading arguments, Enable Debugger on TransferTool.conf", -1);
+        }
+        return null;
     }
 }

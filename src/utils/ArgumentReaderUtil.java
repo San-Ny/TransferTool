@@ -19,7 +19,7 @@ public class ArgumentReaderUtil {
      */
     public static Properties getParams(String[] args) throws WrongArgumentException {
 
-        //-ssh [null] <Use SSH scp>
+        //-scp [null] <Use SSH scp>
         //-sftp [null] <Use SFTP>
         //-cluster [null] <exec/shell on multiple SSH connections simultaneously>
         //-shell [null] <Get shell>
@@ -42,10 +42,8 @@ public class ArgumentReaderUtil {
         // -h [null] <Help message>
 
 
-        if (args.length < 1) {
-            System.err.println("Null arguments");
-            System.exit(0);
-        }
+        if (args.length < 1) ConsolePrinterUtil.die("Null arguments", 0);
+
 
         //check conf file
         if (!ConfigurationUtil.isConfigPresent())ConfigurationUtil.generateConf();
@@ -60,7 +58,7 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-p") || args[a].equals("--port")) properties.put("port",args[++a]);
             else if (args[a].equals("-fl")) properties.put("fileLocal",args[++a]);
             else if (args[a].equals("-fr")) properties.put("fileRemote",args[++a]);
-            else if (args[a].equals("-ssh")) properties.put("Method", "ssh");
+            else if (args[a].equals("-scp")) properties.put("Method", "scp");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
             else if (args[a].equals("-cluster")) properties.put("Method", "cluster");
             else if (args[a].equals("-shell")) properties.put("Method", "shell");
@@ -104,43 +102,7 @@ public class ArgumentReaderUtil {
     }
 
     private static void printHelp() {
-        String message = "\n\n" +
-                "\t\t ______________         ______________ \n" +
-                "\t\t|_____    _____|       |_____    _____|\n" +
-                "\t\t      |  |                   |  |      \n" +
-                "\t\t      |  |                   |  |      \n" +
-                "\t\t      |  |                   |  |      \n" +
-                "\t\t      |  |                   |  |      \n" +
-                "\t\t      |  |                   |  |      \n" +
-                "\t\t      |__|                   |__|      \n" +
-                "\n\n\t\t TransferTool by San-Ny\n\n\nAvailable parameters:\n\n" +
-                "Method to transfer files:\n" +
-                "\t-ssh [null] <Use SSH scp>\n" +
-                "\t-sftp [null] <Use SFTP>\n" +
-                "\t-cluster [null] <exec/shell on multiple SSH connections simultaneously>\n" +
-                "\t-shell [null] <Get shell>\n" +
-                "\n" +
-                "Available arguments, usage depends of method:\n" +
-                "\t--command\t\t\t\t[parameters]\t\t<description>\n" +
-                "\t-u\tor --user\t\t\t[user]\t\t\t\t<SSH/SFTP/Shell/Cluster User>\n" +
-                "\t-p\tor --port\t\t\t[port]\t\t\t\t<SSH/SFTP/Shell/Cluster Port>\n" +
-                "\t-R\tor --host\t\t\t[host]\t\t\t\t<SSH/SFTP/Shell/Cluster url/ip>\n" +
-                "\t-r\tor --recursive\t\t\t\t\t\t\t<Recursive>\n" +
-                "\t-s\tor --strict\t\t\t\t\t\t\t\t<strict mode on>\n" +
-                "\t-w\tor --unstrict\t\t\t\t\t\t\t<strict mode off>\n" +
-                "\t-t\t\t\t\t\t\t\t\t\t\t\t<generates new dir on remote host>\n" +
-                "\t-v\tor --verbose\t\t\t\t\t\t\t<Verbose>\n" +
-                "\t-d\tor --debugging\t\t\t\t\t\t\t<Debugging>\n" +
-                "\t-W\t\t\t\t\t\t[host:]port\t\t\t<SSH/SFTP/Shell/Cluster User:Port>\n" +
-                "\t-J\t\t\t\t\t\t[user@]host[:port]\t<SSH/SFTP/Shell/Cluster User@host:port>\n" +
-                "\t-fl\tor --filelocal\t\t[path]\t\t\t\t<Local directory>\n" +
-                "\t-fr\tor --fileremote\t\t[path]\t\t\t\t<Remote directory>\n" +
-                "\t-up\tor --upload\t\t\t[path]:[path]\t\t<Upload local file path to remote path>\n" +
-                "\t-gt\tor --download\t\t[path]:[path]\t\t<Download remote file path to local file path>\n" +
-                "\t-h\tor --help\t\t\t\t\t\t\t\t<Help message>";
-
-        ConsolePrinterUtil.println(message);
-        System.exit(0);
+        ConsolePrinterUtil.printHelp(0);
     }
 
     /**

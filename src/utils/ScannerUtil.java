@@ -27,9 +27,20 @@ public class ScannerUtil {
      * @return String with the input
      */
     public static String getLine(String msg){
-        ConsolePrinterUtil.println(msg);
+        ConsolePrinterUtil.print(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
+    }
+
+    /**
+     * get scanner line input printing a message
+     * @param msg message to show  before reading
+     * @return String with the input
+     */
+    public static String[] getLineAsArray(String msg, String regex){
+        ConsolePrinterUtil.print(msg);
+        Scanner sc = new Scanner(System.in);
+        return sc.nextLine().split(regex);
     }
 
     /**
