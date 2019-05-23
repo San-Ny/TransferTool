@@ -21,6 +21,16 @@ public class ScannerUtil {
         return sc.nextLine();
     }
 
+    public static int getInt(){
+        Scanner sc = new Scanner(System.in);
+        return sc.nextInt();
+    }
+    public static int getInt(String msg){
+        ConsolePrinterUtil.print(msg);
+        Scanner sc = new Scanner(System.in);
+        return sc.nextInt();
+    }
+
     /**
      * get scanner line input printing a message
      * @param msg message to show  before reading

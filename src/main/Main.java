@@ -1,6 +1,7 @@
 package main;
 
 import exceptions.WrongArgumentException;
+import secureshell.SecureShell;
 import sftpsender.SFTPSender;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
@@ -36,10 +37,14 @@ public class Main {
                     break;
                 }
                 else if (line.equals("shell")) {
-                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
-                    properties = getPropertiesFromArgs(args);
-                    if (properties != null) properties.put("Method", "shell");
-                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    properties = new Properties();
+                    properties.put("user", ScannerUtil.getLine("Insert user:"));
+                    properties.put("host", ScannerUtil.getLine("Insert host:"));
+                    String port = ScannerUtil.getLine("Insert port[22]:");
+                    if (port.isEmpty() || port.isBlank()) port = "22";
+                    properties.put("port", port);
+                    properties.put("Method", "shell");
+                    properties.put("Debugging", "OFF");
                     break;
                 }
                 else if (line.equals("cluster")) {
@@ -58,12 +63,11 @@ public class Main {
 //            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -cluster on arguments to define one", 0);
 
         if (properties == null) System.exit(-1);
-        if (!properties.contains("Method")) ConsolePrinterUtil.die("method not defined", -1);
+        if (properties.contains("Method")) ConsolePrinterUtil.die("method not defined", -1);
 
         if (properties.getProperty("Method").equals("scp")){
             SCPSender scpSender = new SCPSender(properties);
             scpSender.run();
-
             try{
                 scpSender.join();
             }catch (InterruptedException e){
@@ -75,6 +79,14 @@ public class Main {
             sftpSender.run();
             try{
                 sftpSender.join();
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }else if (properties.getProperty("Method").equals("shell")){
+            SecureShell secureShell = new SecureShell(properties);
+            secureShell.run();
+            try{
+                secureShell.join();
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
