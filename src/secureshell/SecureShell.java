@@ -4,7 +4,6 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import pojos.SSH2User;
-import sshsender.SCPSendService;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
 import utils.ConsolePrinterUtil;
@@ -53,7 +52,7 @@ public class SecureShell extends Thread {
 
             while (true) if (channel.isClosed()) {
                 session.disconnect();
-                break;
+                System.exit(0);
             }
 
 
