@@ -50,7 +50,8 @@ public class Main {
                 }
                 else if (line.equals("pssh")) {
                     properties = new Properties();
-                    properties.put("fileLocal", ScannerUtil.getLine("Insert hosts file:"));
+                    if (ScannerUtil.getVerboseInput("Insert hosts file? No for manual insertion. [Y/n]")) properties.put("fileLocal", ScannerUtil.getLine("File path: "));
+                    else properties.put("Interactive", "1");
                     properties.put("Method", "pssh");
                     properties.put("Debugging", "OFF");
                     break;
