@@ -30,7 +30,7 @@ public class ArgumentReaderUtil {
         /*
         -scp [null] <Use SSH scp>
         -sftp [null] <Use SFTP>
-        -cluster [null] <exec/shell on multiple SSH connections simultaneously>
+        -pssh [null] <exec/shell on multiple SSH connections simultaneously>
         -shell [null] <Get shell>
         -u [user] <SSH/SFTP/Shell/Cluster User>
         -p [port] <SSH/SFTP/Shell/Cluster Port>
@@ -68,7 +68,7 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-fr")) properties.put("fileRemote",args[++a]);
             else if (args[a].equals("-scp")) properties.put("Method", "scp");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
-            else if (args[a].equals("-cluster")) properties.put("Method", "cluster");
+            else if (args[a].equals("-pssh")) properties.put("Method", "pssh");
             else if (args[a].equals("-shell")) properties.put("Method", "shell");
             else if (args[a].equals("-h") || args[a].equals("--help")) printHelp();
             else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");

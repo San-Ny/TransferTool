@@ -1,6 +1,6 @@
 package main;
 
-import cluster.MultiSessionController;
+import cluster.ParallelSessionController;
 import exceptions.WrongArgumentException;
 import secureshell.SecureShell;
 import sftpsender.SFTPSender;
@@ -48,11 +48,11 @@ public class Main {
                     properties.put("Debugging", "OFF");
                     break;
                 }
-                else if (line.equals("cluster")) {
-//                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
-//                    properties = getPropertiesFromArgs(args);
-//                    if (properties != null) properties.put("Method", "cluster");
-//                    else ConsolePrinterUtil.die("Null arguments", 0);
+                else if (line.equals("pssh")) {
+                    properties = new Properties();
+                    properties.put("fileLocal", ScannerUtil.getLine("Insert hosts file:"));
+                    properties.put("Method", "pssh");
+                    properties.put("Debugging", "OFF");
                     break;
                 }
             }
@@ -91,11 +91,11 @@ public class Main {
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
-        }else if (properties.getProperty("Method").equals("cluster")){
-            MultiSessionController multiSessionController = new MultiSessionController(properties);
-            multiSessionController.run();
+        }else if (properties.getProperty("Method").equals("pssh")){
+            ParallelSessionController parallelSessionController = new ParallelSessionController(properties);
+            parallelSessionController.run();
             try{
-                multiSessionController.join();
+                parallelSessionController.join();
             }catch (InterruptedException e){
                 e.printStackTrace();
             }

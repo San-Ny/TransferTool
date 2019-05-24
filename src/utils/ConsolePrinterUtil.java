@@ -29,7 +29,7 @@ public class ConsolePrinterUtil {
     public static final String helpMessage = "\nAvailable parameters:\n\nMethod to transfer files:\n" +
             "\t-scp [null] <Use SSH scp>\n" +
             "\t-sftp [null] <Use SFTP>\n" +
-            "\t-cluster [null] <exec/shell on multiple SSH connections simultaneously>\n" +
+            "\t-pssh [null] <exec/shell on multiple SSH connections simultaneously>\n" +
             "\t-shell [null] <Get shell>\n" +
             "\n" +
             "Available arguments, usage depends of method:\n" +
@@ -49,12 +49,13 @@ public class ConsolePrinterUtil {
             "\t-fr\tor --fileremote\t\t[path]\t\t\t\t<Remote directory>\n" +
             "\t-up\tor --upload\t\t\t[path]:[path]\t\t<Upload local file path to remote path>\n" +
             "\t-gt\tor --download\t\t[path]:[path]\t\t<Download remote file path to local file path>\n" +
-            "\t-h\tor --help\t\t\t\t\t\t\t\t<Help message>";
+            "\t-h\tor --help\t\t\t\t\t\t\t\t<Help message>\n" +
+            "\t-i\tor --interactive\t\t\t\t\t\t\t<Help message>";
 
     public static final String helpLiveMessage = "\nMethod to transfer files:\n" +
             "\t scp <Use SSH scp>\n" +
             "\t sftp <Use SFTP>\n" +
-            "\t cluster <exec/shell on multiple SSH connections simultaneously>\n" +
+            "\t pssh <exec/shell on multiple SSH connections simultaneously>\n" +
             "\t shell <Get shell>\n";
 
     public static void println(String msg){
