@@ -2,9 +2,8 @@ package pojos;
 
 import com.jcraft.jsch.*;
 import exceptions.TransferToolException;
+import utils.ConsolePrinterUtil;
 import utils.ScannerUtil;
-
-import java.io.IOException;
 import java.util.Properties;
 
 import static java.lang.Integer.*;
@@ -83,12 +82,9 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
 //        try {
         Session session = jsch.getSession(user, host, parseInt(port));
         Properties strict = new Properties();
-        if (properties.contains("StrictHostKeyChecking")){
-            if (properties.getProperty("StrictHostKeyChecking").equals("no")) strict.put("StrictHostKeyChecking", "no");
-            else if (properties.getProperty("StrictHostKeyChecking").equals("yes"))
-                strict.put("StrictHostKeyChecking", "yes");
-            else if (debugging) System.out.println("StrictHostKeyChecking disabled");
-        }
+        if (properties.contains("StrictHostKeyChecking")) if (properties.getProperty("StrictHostKeyChecking").equals("no")) strict.put("StrictHostKeyChecking", "no");
+            else if (properties.getProperty("StrictHostKeyChecking").equals("yes")) strict.put("StrictHostKeyChecking", "yes");
+            else if (debugging) ConsolePrinterUtil.printClassInfo(SSH2User.class, "StrictHostKeyChecking disabled");
         session.setConfig(strict);
         UserInfo ui = new SSH2User(debugging);
         session.setUserInfo(ui);

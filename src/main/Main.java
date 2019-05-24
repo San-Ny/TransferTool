@@ -1,5 +1,6 @@
 package main;
 
+import cluster.MultiSessionController;
 import exceptions.WrongArgumentException;
 import secureshell.SecureShell;
 import sftpsender.SFTPSender;
@@ -48,10 +49,10 @@ public class Main {
                     break;
                 }
                 else if (line.equals("cluster")) {
-                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
-                    properties = getPropertiesFromArgs(args);
-                    if (properties != null) properties.put("Method", "cluster");
-                    else ConsolePrinterUtil.die("Null arguments", 0);
+//                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+//                    properties = getPropertiesFromArgs(args);
+//                    if (properties != null) properties.put("Method", "cluster");
+//                    else ConsolePrinterUtil.die("Null arguments", 0);
                     break;
                 }
             }
@@ -87,6 +88,14 @@ public class Main {
             secureShell.run();
             try{
                 secureShell.join();
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }else if (properties.getProperty("Method").equals("cluster")){
+            MultiSessionController multiSessionController = new MultiSessionController(properties);
+            multiSessionController.run();
+            try{
+                multiSessionController.join();
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
