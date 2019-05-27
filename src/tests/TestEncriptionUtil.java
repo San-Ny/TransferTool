@@ -20,11 +20,11 @@ public class TestEncriptionUtil {
             ObjectInputStream inputStream;
 
             // gets the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH));
             publicKey = (RSAPublicKey) inputStream.readObject();
 
             // gets the private key
-            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH));
             privateKey = (RSAPrivateKey) inputStream.readObject();
 
         }catch (Exception e){

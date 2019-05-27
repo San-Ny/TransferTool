@@ -17,8 +17,8 @@ public class EncryptionUtil {
     private static final String ALGORITHM_ENCRYPT = ConfigurationUtil.getPropertyOrDefault("AlgorithmEncrypt", "RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
     private static final String ALGORITHM_DECRYPT = ConfigurationUtil.getPropertyOrDefault("AlgorithmDecrypt", "RSA/ECB/OAEPPadding");
 
-    private static final String PRIVATE_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PrivateKeyPath", "/etc/transfertool/keys/private.key");
-    private static final String PUBLIC_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PublicKeyPath", "/etc/transfertool/keys/public.key");
+    public static final String PRIVATE_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PrivateKeyPath", "/etc/transfertool/keys/private.key");
+    public static final String PUBLIC_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PublicKeyPath", "/etc/transfertool/keys/public.key");
 
     /**
      * Saves a key pair of private and public key using 2048 bytes as default on configUtil path
