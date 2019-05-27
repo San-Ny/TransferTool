@@ -22,12 +22,12 @@ public class Test {
             ObjectInputStream inputStream = null;
 
             // Encrypt the string using the public key
-            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH));
             final PublicKey publicKey = (PublicKey) inputStream.readObject();
             final byte[] cipherText = EncryptionUtil.encrypt(originalText, publicKey);
 
             // Decrypt the cipher text using the private key.
-            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_FILE));
+            inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH));
             final PrivateKey privateKey = (PrivateKey) inputStream.readObject();
             final String plainText = EncryptionUtil.decrypt(cipherText, privateKey);
 
