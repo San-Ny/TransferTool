@@ -47,8 +47,10 @@ public class ArgumentReaderUtil {
         -fr [path] <Remote directory>
         -up [path]:[path] <Upload local file path to remote path>
         -gt [path]:[path] <Download remote file path to local file path>
-         -h [null] <Help message>
-         -i [null] <Create sessions on interactive menu>
+        -h [null] <Help message>
+        -i [null] <Create sessions on interactive menu>
+        -encrypt [null] <encript with key par>
+        -decrypt [null] <decript with key par>
         */
 
         if (args.length < 1) ConsolePrinterUtil.die("Null arguments", 0);
@@ -88,6 +90,8 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-r") || args[a].equals("--recursive"))  properties.put("Recursive", "1");
             else if (args[a].equals("-v") || args[a].equals("--verbose"))  properties.put("Verbose", "1");
             else if (args[a].equals("-i") || args[a].equals("--interactive")) properties.put("Interactive", "1");
+            else if (args[a].equals("-encrypt")) properties.put("Method", "encrypt");
+            else if (args[a].equals("-decrypt")) properties.put("Method", "decrypt");
             else if (args[a].equals("-d") || args[a].equals("--debugging"))  properties.put("Debugging", "ON");
             else{
                 properties.put("Debugging","OFF");

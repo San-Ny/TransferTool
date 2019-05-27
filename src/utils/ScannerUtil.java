@@ -31,6 +31,16 @@ public class ScannerUtil {
         return sc.nextInt();
     }
 
+    public static String getPath(String path) {
+        Scanner sc = new Scanner(System.in);
+        while (true){
+            ConsolePrinterUtil.println(path);
+            String line = sc.nextLine();
+            if (PathFinderUtil.isValidPath(line)) return line;
+            ConsolePrinterUtil.printEln("Invalid path");
+        }
+    }
+
     /**
      * get scanner line input printing a message
      * @param msg message to show  before reading
@@ -79,6 +89,21 @@ public class ScannerUtil {
             if (line.equals("Y") || line.equals("y") || line.equals("S") || line.equals("s")) {
                 return true;
             } else if (line.equals("N") || line.equals("n")) return false;
+        }
+    }
+
+    /**
+     * show message and compare in put in an valid or invalid array, if not found will be asked again
+     * @param msg message to show
+     * @param valid valid inputs -> confirm
+     * @param invalid invalid inputs -> denied
+     * @return return if confirmed or denied
+     */
+    public static boolean getVerboseInput(String msg, String[] valid, String[] invalid){
+        while (true) {
+            String line = ScannerUtil.getLine(msg);
+            for (String val:valid)if (val.equals(line)) return true;
+            for (String val:invalid)if (val.equals(line)) return false;
         }
     }
 }

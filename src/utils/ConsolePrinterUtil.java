@@ -66,6 +66,14 @@ public class ConsolePrinterUtil {
         System.out.print(msg);
     }
 
+    public static void printEln(String msg){
+        System.err.println(msg);
+    }
+
+    public static void printE(String msg){
+        System.err.print(msg);
+    }
+
     public static void printClassInfo(Class who,String msg){
         System.out.format("%s[%s%s%s]%s: %s",ANSI_YELLOW, ANSI_PURPLE, who.getName(), ANSI_YELLOW, ANSI_RESET, msg);
     }

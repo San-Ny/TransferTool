@@ -50,9 +50,29 @@ public class Main {
                 }
                 else if (line.equals("pssh")) {
                     properties = new Properties();
-                    if (ScannerUtil.getVerboseInput("Insert hosts file? No for manual insertion. [Y/n]")) properties.put("fileLocal", ScannerUtil.getLine("File path: "));
+                    String[] confirm = {"Y","y","I","i", "F", "f", "file"};
+                    String[] denied = {"N","n","M","m"};
+                    if (ScannerUtil.getVerboseInput("Insert hosts file or Manual insertion? [I/m]",confirm,denied)) properties.put("fileLocal", ScannerUtil.getLine("File path: "));
                     else properties.put("Interactive", "1");
                     properties.put("Method", "pssh");
+                    properties.put("Debugging", "OFF");
+                    break;
+                }else if (line.equals("encrypt")) {
+                    properties = new Properties();
+                    String[] confirm = {"l", "L"};
+                    String[] denied = {"D", "d"};
+                    if (ScannerUtil.getVerboseInput("Encrypt document or live encryption? [D/l]",confirm,denied)) properties.put("Interactive", "1");
+                    else properties.put("fileLocal", ScannerUtil.getPath("File path: "));
+                    properties.put("Method", "encrypt");
+                    properties.put("Debugging", "OFF");
+                    break;
+                }else if (line.equals("decrypt")) {
+                    properties = new Properties();
+                    String[] confirm = {"l", "L"};
+                    String[] denied = {"D", "d"};
+                    if (ScannerUtil.getVerboseInput("Decrypt document or live encryption? [D/l]",confirm,denied)) properties.put("Interactive", "1");
+                    else properties.put("fileLocal", ScannerUtil.getPath("File path: "));
+                    properties.put("Method", "decrypt");
                     properties.put("Debugging", "OFF");
                     break;
                 }
@@ -62,7 +82,7 @@ public class Main {
         }
 
 //            String[] required = {"scp", "sftp"};
-//            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -parallelshell on arguments to define one", 0);
+//            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -pssh on arguments to define one", 0);
 
         if (properties == null) {
             ConsolePrinterUtil.println("Transfer command not found");
@@ -103,6 +123,10 @@ public class Main {
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
+        }else if (properties.getProperty("Method").equals("encrypt")){
+
+        }else if (properties.getProperty("Method").equals("decrypt")){
+
         }
 
     }

@@ -8,45 +8,29 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.MGF1ParameterSpec;
 
-/**
- * @author JavaDigest
- *
- */
 public class EncryptionUtil {
-    /**
-     * String to hold name of the encryption algorithm.
-     * keys can be stored in software, create a static final variable for PublicKey and PrivateKey (instead of String) and use it.
-     */
-    public static final String ALGORITHMKEYPARGENERATOR = "RSA";
-    public static final String ALGORITHMENCRIPTOR = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
-    public static final String ALGORITHMDECRIPTOR = "RSA/ECB/OAEPPadding";
 
     /**
-     * String to hold the name of the private key file.
+     * variables from configUtil
      */
-    public static final String PRIVATE_KEY_FILE = "/etc/transfertool/keys/private.key";
+    private static final String ALGORITHM_KEY_PAR_GENERATOR = ConfigurationUtil.getPropertyOrDefault("AlgorithmKeyParGenerator", "RSA");
+    private static final String ALGORITHM_ENCRYPT = ConfigurationUtil.getPropertyOrDefault("AlgorithmEncrypt", "RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+    private static final String ALGORITHM_DECRYPT = ConfigurationUtil.getPropertyOrDefault("AlgorithmDecrypt", "RSA/ECB/OAEPPadding");
+
+    private static final String PRIVATE_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PrivateKeyPath", "/etc/transfertool/keys/private.key");
+    private static final String PUBLIC_KEY_PATH = ConfigurationUtil.getPropertyOrDefault("PublicKeyPath", "/etc/transfertool/keys/public.key");
 
     /**
-     * String to hold name of the public key file.
-     */
-    public static final String PUBLIC_KEY_FILE = "/etc/transfertool/keys/public.key";
-
-    /**
-     * Generate key which contains a pair of private and public key using 1024
-     * bytes. Store the set of keys in Prvate.key and Public.key files.
-     *
-     * @throws NoSuchAlgorithmException exception
-     * @throws IOException exception
-     * @throws FileNotFoundException exception
+     * Saves a key pair of private and public key using 2048 bytes as default on configUtil path
      */
     public static void generateKey() {
         try {
-            final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHMKEYPARGENERATOR);
-            keyGen.initialize(2048);
+            final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM_KEY_PAR_GENERATOR);
+            keyGen.initialize(Integer.parseInt(ConfigurationUtil.getPropertyOrDefault("KeyBytes", "2048")));
             final KeyPair key = keyGen.generateKeyPair();
 
-            File privateKeyFile = new File(PRIVATE_KEY_FILE);
-            File publicKeyFile = new File(PUBLIC_KEY_FILE);
+            File privateKeyFile = new File(PRIVATE_KEY_PATH);
+            File publicKeyFile = new File(PUBLIC_KEY_PATH);
 
             // Create files to store public and private key
             if (privateKeyFile.getParentFile() != null) {
@@ -71,20 +55,14 @@ public class EncryptionUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
-     * The method checks if the pair of public and private key has been generated.
-     *
-     * @return flag indicating if the pair of keys were generated.
+     * Check if are files on private and public file paths
+     * @return flag indicating if the pair of keys exists
      */
     public static boolean areKeysPresent() {
-
-        File privateKey = new File(PRIVATE_KEY_FILE);
-        File publicKey = new File(PUBLIC_KEY_FILE);
-
-        return privateKey.exists() && publicKey.exists();
+        return new File(PRIVATE_KEY_PATH).exists() && new File(PUBLIC_KEY_PATH).exists();
     }
 
     /**
@@ -96,7 +74,7 @@ public class EncryptionUtil {
      */
     public static byte[] encrypt(String text, PublicKey key) {
         try {
-            Cipher cipher = Cipher.getInstance(ALGORITHMENCRIPTOR);
+            Cipher cipher = Cipher.getInstance(ALGORITHM_ENCRYPT);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -113,9 +91,9 @@ public class EncryptionUtil {
      * @return plain text
      */
     public static String decrypt(byte[] text, PrivateKey key) {
-        try {
-            Cipher cipher = Cipher.getInstance(ALGORITHMDECRIPTOR);
-            OAEPParameterSpec oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-1"), PSource.PSpecified.DEFAULT);
+        try { //ConfigurationUtil.getPropertyOrDefault("", "")
+            Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
             cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
             byte[] pt = cipher.doFinal(text);
             return new String(pt, StandardCharsets.UTF_8);
