@@ -24,10 +24,10 @@ fi
 
 echo "#!/bin/bash" >> /usr/bin/tp
 echo 'if [[ $1 == "update" ]]; then' >> /usr/bin/tp
-echo "sudo /usr/share/tp/install.sh"
-echo "else"
+echo "sudo /usr/share/tp/install.sh" >> /usr/bin/tp
+echo "else" >> /usr/bin/tp
 echo "sudo java -jar /usr/share/tp/TransferTool.jar $@" >> /usr/bin/tp
-echo "fi"
+echo "fi" >> /usr/bin/tp
 
 sudo chmod u+x "/usr/bin/tp"
 sudo chmod u+x "/usr/share/tp/install.sh"
