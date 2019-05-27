@@ -27,12 +27,67 @@ tp \- is a suite to use SCP2, SFTP, SSH & Parallel SSH from a GUI on remote desk
 [-i <Create sessions on interactive menu>]
 [[fileLocal] user@]hostname:[fileRemote] [port]
 .SH DESCRIPTION
-nuseradd is high level shell program for adding users to LDAP server.  On Debian, administrators should usually use nuseradd.debian(8) instead.
+TransferTool is a java suite to implement a GUI to the SCP2, SFTP, SSH and parallel SSH on headless server distributions of Linux
 .SH OPTIONS
-The nuseradd does not take any options. However, you can supply username.
+-scp [program arguments]   use SCP2 tool
+-sftp [program arguments]  use sftp protocol
+-pssh [program arguments]  create parallel ssh instances to run same command on multiple clients simultaneously
+-shell [program arguments] obtain ssh connection
+
+-u user
+    Specify the target user
+
+-p port
+    Specify the target port
+
+-R host
+    Specify the target host
+
+-W host:port
+    Specify the target host and port
+
+-J user@host:port
+    Specify the target user host and port
+
+-r recursive
+    Copy or upload entire directories
+
+-s strict
+    Set StrictHostKeyChecking to yes. This option is directly passed to ssh(1).
+
+-w strict
+    Set StrictHostKeyChecking to no. This option is directly passed to ssh(1).
+
+-t
+    Generate new directories if required on target host
+
+-v verbose
+    Causes tp to ask user for file inclusion
+
+-d debugging
+    Causes tp print debugging messages about their progress.
+
+-fl fileLocal
+    Specify the local path to upload
+
+-fr fileRemote
+    Specify the target path to place
+
+-up upload
+    Upload local file path to remote path via sftp
+
+-gt download
+    Download remote file path to local file path via sftp
+
+-h help
+    Display help message
+
+-i interactive
+    Create sessions on interactive menu
+
 .SH SEE ALSO
-useradd(8), passwd(5), nuseradd.debian(8)
+sftp(1), ssh(1), ssh-add(1), ssh-agent(1), ssh-keygen(1), ssh_config(5), sshd(8), ftp(1), ls(1), sftp-server(8)
 .SH BUGS
-No known bugs.
+Bugs and issues can be found on https://github.com/San-Ny/TransferTool/issues
 .SH AUTHOR
-Vivek Gite (vivek@nixcraft.net.in)
+San-Ny (https://github.com/San-Ny)
