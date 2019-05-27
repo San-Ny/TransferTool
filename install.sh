@@ -38,7 +38,7 @@ function create_file_command {
 function create_dirs() {
     sudo mkdir ${CONFIG_PATH}
     sudo mkdir ${APPLICATION_PATH}
-#    sudo mkdir ${APPLICATION_SOURCE}
+    sudo mkdir ${APPLICATION_SOURCE}
 }
 
 function remove_old() {
