@@ -61,8 +61,6 @@ public class Main {
             properties = getPropertiesFromArgs(args);
         }
 
-
-
 //            String[] required = {"scp", "sftp"};
 //            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -parallelshell on arguments to define one", 0);
 
