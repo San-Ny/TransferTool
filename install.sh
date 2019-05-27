@@ -29,12 +29,11 @@ if [[ -e "/usr/bin/tp" ]]; then
         echo "sudo java -jar /usr/share/tp/TransferTool.jar $@" >> /usr/bin/tp
         echo "fi" >> /usr/bin/tp
     else
-        echo -e "\nCommand not updated\n"
+        echo -e "Command not updated\n"
     fi
 fi
 
 sudo chmod u+x "/usr/bin/tp"
 sudo chmod u+x "/usr/share/tp/install.sh"
 
-echo ""
-echo -e "use 'sudo tp' to use the new tool\n"
+echo -e "use 'sudo tp' to use TransferTool\n"
