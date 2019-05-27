@@ -1,16 +1,10 @@
-package cluster;
+package parallelshell;
 
-import sshsender.SCPSender;
-import utils.ArgumentReaderUtil;
 import utils.ConsolePrinterUtil;
 import utils.ScannerUtil;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
-
-import static utils.ConsolePrinterUtil.die;
 
 /**
  * NOTICE ALL HOSTS MUST KNOW THE MAIN HOST KEY or password will be asked
@@ -49,6 +43,8 @@ public class ParallelSessionController extends Thread{
                 else if (option.equals("5")) ConsolePrinterUtil.die("bye", 0);
             }
         }
+
+
 
     }
 }

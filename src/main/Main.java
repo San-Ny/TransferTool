@@ -1,6 +1,6 @@
 package main;
 
-import cluster.ParallelSessionController;
+import parallelshell.ParallelSessionController;
 import exceptions.WrongArgumentException;
 import secureshell.SecureShell;
 import sftpsender.SFTPSender;
@@ -62,7 +62,7 @@ public class Main {
 
 
 //            String[] required = {"scp", "sftp"};
-//            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -cluster on arguments to define one", 0);
+//            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -parallelshell on arguments to define one", 0);
 
         if (properties == null) System.exit(-1);
         if (properties.contains("Method")) ConsolePrinterUtil.die("method not defined", -1);
