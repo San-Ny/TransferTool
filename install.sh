@@ -12,6 +12,7 @@ cd /opt
 sudo git clone https://github.com/San-Ny/TransferTool
 
 echo 'Installing on /usr/share/tp';
+sudo mkdir /usr/share/tp
 sudo cp /opt/TransferTool/out/artifacts/TransferTool_jar/TransferTool.jar /usr/share/tp/TransferTool.jar
 sudo cp /opt/TransferTool/install.sh /usr/share/tp/install.sh
 
@@ -31,6 +32,13 @@ if [[ -e "/usr/bin/tp" ]]; then
     else
         echo -e "Command not updated\n"
     fi
+else
+    echo "#!/bin/bash" >> /usr/bin/tp
+    echo 'if [[ $1 == "update" ]]; then' >> /usr/bin/tp
+    echo "sudo /usr/share/tp/install.sh" >> /usr/bin/tp
+    echo "else" >> /usr/bin/tp
+    echo "sudo java -jar /usr/share/tp/TransferTool.jar $@" >> /usr/bin/tp
+    echo "fi" >> /usr/bin/tp
 fi
 
 sudo chmod u+x "/usr/bin/tp"

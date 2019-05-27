@@ -69,7 +69,7 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-scp")) properties.put("Method", "scp");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
             else if (args[a].equals("-pssh")) properties.put("Method", "pssh");
-            else if (args[a].equals("-shell")) properties.put("Method", "shell");
+            else if (args[a].equals("-shell") || args[a].equals("-ssh")) properties.put("Method", "shell");
             else if (args[a].equals("-h") || args[a].equals("--help")) printHelp();
             else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");
             else if (args[a].equals("-w")) properties.put("StrictHostKeyChecking", "no");

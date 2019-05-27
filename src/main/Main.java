@@ -37,7 +37,7 @@ public class Main {
                     else ConsolePrinterUtil.die("Null arguments", 0);
                     break;
                 }
-                else if (line.equals("shell")) {
+                else if (line.equals("shell") || line.equals("ssh")) {
                     properties = new Properties();
                     properties.put("user", ScannerUtil.getLine("Insert user:"));
                     properties.put("host", ScannerUtil.getLine("Insert host:"));
@@ -57,6 +57,8 @@ public class Main {
                     break;
                 }
             }
+        }else{
+            properties = getPropertiesFromArgs(args);
         }
 
 
@@ -64,8 +66,11 @@ public class Main {
 //            String[] required = {"scp", "sftp"};
 //            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -parallelshell on arguments to define one", 0);
 
-        if (properties == null) System.exit(-1);
-        if (properties.contains("Method")) ConsolePrinterUtil.die("method not defined", -1);
+        if (properties == null) {
+            ConsolePrinterUtil.println("Transfer command not found");
+            System.exit(0);
+        }
+        if (!properties.containsKey("Method")) ConsolePrinterUtil.die("method not defined", -1);
 
         if (properties.getProperty("Method").equals("scp")){
             SCPSender scpSender = new SCPSender(properties);
