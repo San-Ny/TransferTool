@@ -1,7 +1,6 @@
 package utils;
 
 import exceptions.WrongArgumentException;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -25,7 +24,7 @@ public class ArgumentReaderUtil {
      * @return Properties with the arguments inserted
      * @throws WrongArgumentException if arguments are invalid or bad filled
      */
-    public static Properties getParams(@NotNull String[] args) throws WrongArgumentException {
+    public static Properties getParams(String[] args) throws WrongArgumentException {
 
         /*
         -scp [null] <Use SSH scp>
@@ -110,7 +109,7 @@ public class ArgumentReaderUtil {
             }
         }
 
-        if (properties.getProperty("Debugging").equals("ON")) properties.forEach((k, v) -> ConsolePrinterUtil.printDebugging(ArgumentReaderUtil.class,k + ":" + v, Thread.currentThread().getStackTrace()[1].getLineNumber()));
+        if (properties.containsKey("Debugging") && properties.getProperty("Debugging").equals("ON")) properties.forEach((k, v) -> ConsolePrinterUtil.printDebugging(ArgumentReaderUtil.class,k + ":" + v, Thread.currentThread().getStackTrace()[1].getLineNumber()));
 
         return properties;
     }
