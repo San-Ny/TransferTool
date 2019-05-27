@@ -27,7 +27,7 @@ function create_file_command {
     echo '    sudo rm -rf ${COMMAND_FILE}' >> /usr/bin/tp
     echo '}' >> /usr/bin/tp
     echo '' >> /usr/bin/tp
-    echo "function help() {" >> /usr/bin/tp
+    echo "function help_message() {" >> /usr/bin/tp
     echo '    echo -e "tp usage:\n\t help -> this message\n\t version -> current program version\n\t update -> run installation script to get latest release from git\n\t remove -> remove application"' >> /usr/bin/tp
     echo '}' >> /usr/bin/tp
     echo '' >> /usr/bin/tp
@@ -35,6 +35,8 @@ function create_file_command {
     echo " sudo /usr/share/tp/install.sh" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "remove" ]]; then' >> ${COMMAND_FILE}
     echo " remove_old" >> ${COMMAND_FILE}
+    echo 'elif [[ $1 == "help" ]]; then' >> ${COMMAND_FILE}
+    echo " help_message" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
     echo ' echo ${VERSION}' >> ${COMMAND_FILE}
     echo 'else' >> ${COMMAND_FILE}
