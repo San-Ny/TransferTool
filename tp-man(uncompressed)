@@ -1,0 +1,38 @@
+Manpage for tp.
+Create a new issue to correct errors or typos on https://github.com/San-Ny/TransferTool/issues.
+.TH man 8 "27 May 2010" "0.0.1" "TransferTool man page"
+.SH NAME
+tp \- is a suite to use SCP2, SFTP, SSH & Parallel SSH from a GUI on remote desktop
+.SH SYNOPSIS
+[-scp <Use SSH scp>]
+[-sftp <Use SFTP>]
+[-pssh <exec/shell on multiple SSH connections simultaneously>]
+[-shell <Get shell>]
+[-u [user] <SSH/SFTP/Shell/Cluster User>]
+[-p [port] <SSH/SFTP/Shell/Cluster Port>]
+[-R [host] <SSH/SFTP/Shell/Cluster url/ip>]
+[-r <Recursive>]
+[-s <strict mode on>]
+[-w <strict mode off>]
+[-t <generates new dir on remote host>]
+[-v <Verbose>]
+[-d <Debugging>]
+[-W [host:]port <SSH/SFTP/Shell/Cluster User:Port>]
+[-J [user@]host[:port] <SSH/SFTP/Shell/Cluster User@host:port>]
+[-fl [path] local <Local directory>]
+[-fr [path] <Remote directory>]
+[-up [path]:[path] <Upload local file path to remote path>]
+[-gt [path]:[path] <Download remote file path to local file path>]
+[-h <Help message>]
+[-i <Create sessions on interactive menu>]
+[[fileLocal] user@]hostname:[fileRemote] [port]
+.SH DESCRIPTION
+nuseradd is high level shell program for adding users to LDAP server.  On Debian, administrators should usually use nuseradd.debian(8) instead.
+.SH OPTIONS
+The nuseradd does not take any options. However, you can supply username.
+.SH SEE ALSO
+useradd(8), passwd(5), nuseradd.debian(8)
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Vivek Gite (vivek@nixcraft.net.in)

@@ -8,6 +8,7 @@ APPLICATION_PATH=/usr/share/tp
 APPLICATION_SOURCE=/opt/TransferTool
 #file vars
 COMMAND_FILE=/usr/bin/tp
+MAN_FILE=/usr/share/man/man1/tp.1.gz
 
 #file writer with echos
 function create_file_command {
@@ -44,6 +45,22 @@ function create_file_command {
     echo "fi" >> ${COMMAND_FILE}
 }
 
+function create_man_page() {
+    echo 'Manpage for tp.' >> ${MAN_FILE}
+    echo ' code on https://github.com/San-Ny/TransferTool' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+    echo '' >> ${MAN_FILE}
+}
+
 #create needed dirs
 function create_dirs() {
     sudo mkdir ${CONFIG_PATH}
@@ -72,6 +89,8 @@ function move_files() {
     sudo cp /opt/TransferTool/out/artifacts/TransferTool_jar/TransferTool.jar /usr/share/tp/TransferTool.jar
     sudo cp /opt/TransferTool/install.sh /usr/share/tp/install.sh
     sudo cp /opt/TransferTool/transfertool.conf ${CONFIG_PATH}
+    yes | sudo cp /opt/TransferTool/tp.1.gz ${MAN_FILE}
+    sudo updatedb
 }
 
 if [[ $1 == "" ]]; then
