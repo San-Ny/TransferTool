@@ -60,6 +60,7 @@ function remove_old() {
 function update_permissions() {
     sudo chmod u+x "/usr/bin/tp"
     sudo chmod u+x "/usr/share/tp/install.sh"
+    sudo chmod +x "/usr/bin/tp"
 }
 
 function download() {
@@ -102,4 +103,4 @@ elif [[ $1 == "version" ]]; then
  echo ${VERSION}
 fi
 
-echo -e "\nUse 'sudo tp' to use TransferTool\n"
+echo -e "\nUse 'tp' to use TransferTool\n"
