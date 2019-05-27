@@ -3,6 +3,7 @@
 if [[ -d "/usr/share/tp" ]]; then
  cd /usr/share/tp
  sudo rm -rf TransferTool.jar
+ sudo rm -rf /opt/TransferTool
  echo 'Removed old installation';
 fi
 
@@ -24,8 +25,9 @@ fi
 echo "#!/bin/bash" >> /usr/bin/tp
 echo 'if [[ $1 == "update" ]]; then' >> /usr/bin/tp
 echo "sudo /usr/share/tp/install.sh"
-echo "fi"
+echo "else"
 echo "sudo java -jar /usr/share/tp/TransferTool.jar $@" >> /usr/bin/tp
+echo "fi"
 
 sudo chmod u+x "/usr/bin/tp"
 sudo chmod u+x "/usr/share/tp/install.sh"
