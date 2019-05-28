@@ -224,4 +224,15 @@ public class PathFinderUtil {
         session.disconnect();
     }
 
+    /**
+     * obtain only the file name of a path
+     * @param path file location
+     * @return name without extension
+     */
+    public static String removeExtension(String path){
+        File file = new File(path);
+        String[] name = file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("\\")+1).split("[.]");
+        return name[0];
+    }
+
 }

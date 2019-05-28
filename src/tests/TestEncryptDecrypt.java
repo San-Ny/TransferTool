@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Arrays;
 
 public class TestEncryptDecrypt {
     public static void main(String[] args) {
@@ -24,17 +25,20 @@ public class TestEncryptDecrypt {
             // Encrypt the string using the public key
             inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH));
             final PublicKey publicKey = (PublicKey) inputStream.readObject();
-            final byte[] cipherText = EncryptionUtil.encrypt(originalText, publicKey);
+            final byte[] cipherText = EncryptionUtil.encryptString(originalText, publicKey);
 
             // Decrypt the cipher text using the private key.
             inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH));
             final PrivateKey privateKey = (PrivateKey) inputStream.readObject();
-            final String plainText = EncryptionUtil.decrypt(cipherText, privateKey);
+            final byte[] plainText = EncryptionUtil.decrypt(cipherText, privateKey);
 
             // Printing the Original, Encrypted and Decrypted Text
             System.out.println("Original Text: " + originalText);
-            System.out.println("Encrypted Text: " + cipherText.toString());
-            System.out.println("Decrypted Text: " + plainText);
+            System.out.println("Encrypted Text: " + Arrays.toString(cipherText));
+            System.out.print("Decrypted Text: ");
+            assert plainText != null;
+            for (int i : plainText) System.out.print((char)i);
+            System.out.println();
         }catch (Exception e){
             System.out.println(e.getMessage());
         }

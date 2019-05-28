@@ -36,7 +36,7 @@ public class ScannerUtil {
     public static String getPath(String path) {
         Scanner sc = new Scanner(System.in);
         while (true){
-            println(path);
+            print(path);
             String line = sc.nextLine();
             if (PathFinderUtil.isValidPath(line)) return line;
             printEln("Invalid path");

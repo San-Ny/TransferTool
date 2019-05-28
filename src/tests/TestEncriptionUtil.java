@@ -32,7 +32,7 @@ public class TestEncriptionUtil {
             System.exit(-1);
         }
 
-        byte[] encripted = EncryptionUtil.encrypt("cactus",publicKey);
+        byte[] encripted = EncryptionUtil.encryptString("cactus",publicKey);
 
         System.out.println(EncryptionUtil.decrypt(encripted, privateKey));
 

@@ -1,5 +1,7 @@
 package utils;
 
+import exceptions.TransferToolException;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
@@ -7,6 +9,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.MGF1ParameterSpec;
+
+import static utils.ConsolePrinterUtil.*;
 
 public class EncryptionUtil {
 
@@ -33,12 +37,12 @@ public class EncryptionUtil {
             File publicKeyFile = new File(PUBLIC_KEY_PATH);
 
             // Try to create files, run tool as sudo to avoid security holes
-            if (privateKeyFile.getParentFile() != null) if(!privateKeyFile.getParentFile().mkdirs()) ConsolePrinterUtil.die("Unable to create directories in /etc/ permission needed", -1);
+            if (privateKeyFile.getParentFile() != null) if(privateKeyFile.getParentFile().mkdirs()) die("Unable to create directories in /etc/ permission needed", -1);
 
-            if (!privateKeyFile.createNewFile()) ConsolePrinterUtil.die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
+            if (!privateKeyFile.createNewFile()) die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
 
-            if (publicKeyFile.getParentFile() != null) if(!publicKeyFile.getParentFile().mkdirs())  ConsolePrinterUtil.die("Unable to create directories in /etc/ permission needed", -1);
-            if (!publicKeyFile.createNewFile()) ConsolePrinterUtil.die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
+            if (publicKeyFile.getParentFile() != null) if(publicKeyFile.getParentFile().mkdirs())  die("Unable to create directories in /etc/ permission needed", -1);
+            if (!publicKeyFile.createNewFile()) die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
 
             // Saving the Public key in a file
             ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));
@@ -69,11 +73,34 @@ public class EncryptionUtil {
      * @param key : The public key
      * @return Encrypted text
      */
-    public static byte[] encrypt(String text, PublicKey key) {
+    public static byte[] encryptString(String text, PublicKey key) {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM_ENCRYPT);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Cipher getEncryptionCipher(PublicKey key) throws TransferToolException {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM_ENCRYPT);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new TransferToolException("Unable to return cipher");
+    }
+
+    public static Cipher getDecryptionCipher(PrivateKey key) {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
+            cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
+            return cipher;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,13 +114,25 @@ public class EncryptionUtil {
      * @param key :The private key
      * @return plain text
      */
-    public static String decrypt(byte[] text, PrivateKey key) {
+    public static String decryptString(String text, PrivateKey key) {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
+            cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
+            byte[] pt = cipher.doFinal(text.getBytes());
+            return new String(pt, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static byte[] decrypt(byte[] text, PrivateKey key) {
         try { //ConfigurationUtil.getPropertyOrDefault("", "")
             Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
             OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
             cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
-            byte[] pt = cipher.doFinal(text);
-            return new String(pt, StandardCharsets.UTF_8);
+            return cipher.doFinal(text);
 
         } catch (Exception ex) {
             ex.printStackTrace();
