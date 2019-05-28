@@ -33,15 +33,12 @@ public class EncryptionUtil {
             File publicKeyFile = new File(PUBLIC_KEY_PATH);
 
             // Create files to store public and private key
-            if (privateKeyFile.getParentFile() != null) {
-                privateKeyFile.getParentFile().mkdirs();
-            }
-            privateKeyFile.createNewFile();
+            if (privateKeyFile.getParentFile() != null) if(!privateKeyFile.getParentFile().mkdirs()) ConsolePrinterUtil.die("Unable to create directories in /etc/ permission needed", -1);
 
-            if (publicKeyFile.getParentFile() != null) {
-                publicKeyFile.getParentFile().mkdirs();
-            }
-            publicKeyFile.createNewFile();
+            if (!privateKeyFile.createNewFile()) ConsolePrinterUtil.die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
+
+            if (publicKeyFile.getParentFile() != null) if(!publicKeyFile.getParentFile().mkdirs())  ConsolePrinterUtil.die("Unable to create directories in /etc/ permission needed", -1);
+            if (!publicKeyFile.createNewFile()) ConsolePrinterUtil.die("Unable to write key to /etc/transfertool/keys, permission needed", -1);
 
             // Saving the Public key in a file
             ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));

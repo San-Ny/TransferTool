@@ -33,7 +33,7 @@ public class Test {
 
             // Printing the Original, Encrypted and Decrypted Text
             System.out.println("Original Text: " + originalText);
-            System.out.println("Encrypted Text: " +cipherText.toString());
+            System.out.println("Encrypted Text: " + cipherText.toString());
             System.out.println("Decrypted Text: " + plainText);
         }catch (Exception e){
             System.out.println(e.getMessage());

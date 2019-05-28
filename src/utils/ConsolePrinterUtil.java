@@ -15,7 +15,7 @@ public class ConsolePrinterUtil {
     private static final String ANSI_WHITE = "\u001B[37m";
     private static final String terminal = " \u001B[32mtp\u001B[0m> ";
 
-    public static final String header = "\n\n" +
+    public static final String header = "\n\n" + ANSI_CYAN +
             "\t\t ______________         ______________ \n" +
             "\t\t|_____    _____|       |_____    _____|\n" +
             "\t\t      |  |                   |  |      \n" +
@@ -24,7 +24,7 @@ public class ConsolePrinterUtil {
             "\t\t      |  |                   |  |      \n" +
             "\t\t      |  |                   |  |      \n" +
             "\t\t      |__|                   |__|      \n" +
-            "\n\n\t\t TransferTool by San-Ny\n";
+            "\n\n\t\t TransferTool by San-Ny\n" + ANSI_RESET;
 
     public static final String helpMessage = "\nAvailable parameters:\n\nMethod to transfer files:\n" +
             "\t-scp [null] <Use SSH scp>\n" +
@@ -75,7 +75,7 @@ public class ConsolePrinterUtil {
     }
 
     public static void printClassInfo(Class who,String msg){
-        System.out.format("%s[%s%s%s]%s: %s",ANSI_YELLOW, ANSI_PURPLE, who.getName(), ANSI_YELLOW, ANSI_RESET, msg);
+        System.out.format("%s[%s%s%s]%s: %s\n",ANSI_YELLOW, ANSI_PURPLE, who.getName(), ANSI_YELLOW, ANSI_RESET, msg);
     }
 
     public static void printDebugging(Class who, String msg, int line){
