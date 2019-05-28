@@ -64,6 +64,8 @@ function create_man_page() {
 #create needed dirs
 function create_dirs() {
     sudo mkdir ${CONFIG_PATH}
+    sudo mkdir ${CONFIG_PATH}/keys
+    sudo mkdir ${CONFIG_PATH}/properties
     sudo mkdir ${APPLICATION_PATH}
 }
 
