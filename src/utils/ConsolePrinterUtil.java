@@ -99,9 +99,13 @@ public class ConsolePrinterUtil {
 
     /**
      *
-     * @param msg
      * @param status
      */
+    public static void die(int status){
+        System.err.println("bye");
+        System.exit(status);
+    }
+
     public static void die(String msg, int status){
         System.err.println(msg);
         System.exit(status);

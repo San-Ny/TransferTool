@@ -153,7 +153,7 @@ public class Main {
             if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
             RSAPublicKey publicKey = null;
             if (!properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")){
-//key file reader
+                //key file reader
                 ObjectInputStream inputStream;
 
                 // gets the public key
@@ -161,7 +161,11 @@ public class Main {
                     inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH));
                     publicKey = (RSAPublicKey) inputStream.readObject();
 
-                    printByteEncrypted(Objects.requireNonNull(EncryptionUtil.encrypt("cactus", publicKey)));
+                    while (true){
+                        String line = ScannerUtil.getLine("Text to encrypt (n to exit):");
+                        if (line.equals("n")) die(0);
+                        printByteEncrypted(Objects.requireNonNull(EncryptionUtil.encrypt(line, publicKey)));
+                    }
 
 //                    System.out.println(EncryptionUtil.decrypt(encripted, privateKey));
                 } catch (IOException | ClassNotFoundException e) {
