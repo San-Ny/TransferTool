@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import static utils.ArgumentReaderUtil.isNotValid;
+import static utils.ArgumentReaderUtil.isOneValid;
 import static utils.ConfigurationUtil.*;
 import static utils.ConsolePrinterUtil.*;
 
@@ -154,12 +155,12 @@ public class Main {
                 e.printStackTrace();
             }
         }else if (properties.getProperty("Method").equals("encrypt")){
-            String[] requiredProperties = {"fileLocal"};
-            if (isNotValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
+            String[] requiredProperties = {"fileLocal", "Interactive"};
+            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
             encryptCall(properties);
         }else if (properties.getProperty("Method").equals("decrypt")){
-            String[] requiredProperties = {"fileLocal"};
-            if (isNotValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
+            String[] requiredProperties = {"fileLocal", "Interactive"};
+            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
             decryptCall(properties);
         }
 
