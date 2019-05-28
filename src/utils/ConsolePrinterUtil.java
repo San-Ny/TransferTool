@@ -66,12 +66,23 @@ public class ConsolePrinterUtil {
         System.out.print(msg);
     }
 
+    public static void print(char msg){
+        System.out.print(msg);
+    }
+
     public static void printEln(String msg){
         System.err.println(msg);
     }
 
     public static void printE(String msg){
         System.err.print(msg);
+    }
+
+    public static void printByteEncrypted(byte[] msg){
+        System.out.print(ANSI_CYAN);
+        for (byte c: msg) print((char)c);
+        System.out.println(ANSI_RESET);
+
     }
 
     public static void printClassInfo(Class who,String msg){

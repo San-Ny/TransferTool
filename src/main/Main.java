@@ -6,7 +6,15 @@ import secureshell.SecureShell;
 import sftpsender.SFTPSender;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
+import utils.EncryptionUtil;
 import utils.ScannerUtil;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Objects;
 import java.util.Properties;
 
 import static utils.ConfigurationUtil.*;
@@ -142,9 +150,30 @@ public class Main {
                 e.printStackTrace();
             }
         }else if (properties.getProperty("Method").equals("encrypt")){
+            if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
+            RSAPublicKey publicKey = null;
+            if (!properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")){
+//key file reader
+                ObjectInputStream inputStream;
 
+                // gets the public key
+                try {
+                    inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH));
+                    publicKey = (RSAPublicKey) inputStream.readObject();
+
+                    printByteEncrypted(Objects.requireNonNull(EncryptionUtil.encrypt("cactus", publicKey)));
+
+//                    System.out.println(EncryptionUtil.decrypt(encripted, privateKey));
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }else if (properties.getProperty("Method").equals("decrypt")){
+            if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
+            RSAPrivateKey privateKey = null;
+            if (!properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")){
 
+            }
         }
 
     }
@@ -155,7 +184,7 @@ public class Main {
         }catch (WrongArgumentException we){
             if(getPropertyOrDefault("Debugger", "ON").equals("OFF"))
                 die(SCPSender.class, we.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
-            else die("Error reading arguments, Enable Debugger on TransferTool.conf", -1);
+            else die("Error reading arguments, Enable Debugger on TransferTool.conf may help", -1);
         }
         return null;
     }
