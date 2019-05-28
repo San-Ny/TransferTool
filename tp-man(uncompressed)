@@ -1,6 +1,6 @@
 Manpage for tp.
 Create a new issue to correct errors or typos on https://github.com/San-Ny/TransferTool/issues.
-.TH man 8 "27 May 2010" "0.0.1" "TransferTool man page"
+.TH man 8 "27 May 2019" "0.0.1" "TransferTool man page"
 .SH NAME
 tp \- is a suite to use SCP2, SFTP, SSH & Parallel SSH from a GUI on remote desktop
 .SH SYNOPSIS
