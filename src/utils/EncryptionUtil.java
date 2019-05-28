@@ -32,7 +32,7 @@ public class EncryptionUtil {
             File privateKeyFile = new File(PRIVATE_KEY_PATH);
             File publicKeyFile = new File(PUBLIC_KEY_PATH);
 
-            // Create files to store public and private key
+            // Try to create files, run tool as sudo to avoid security holes
             if (privateKeyFile.getParentFile() != null) if(!privateKeyFile.getParentFile().mkdirs()) ConsolePrinterUtil.die("Unable to create directories in /etc/ permission needed", -1);
 
             if (!privateKeyFile.createNewFile()) ConsolePrinterUtil.die("Unable to write key to /etc/transfertool/keys, permission needed", -1);

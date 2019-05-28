@@ -9,8 +9,9 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
+import java.util.Arrays;
 
-public class Test2 {
+public class TestDefaultEncryptionParams {
     public static void main(String[] args) {
         try{
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -23,6 +24,9 @@ public class Test2 {
             Cipher oaepFromAlgo = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
             oaepFromAlgo.init(Cipher.ENCRYPT_MODE, pubkey);
             byte[] ct = oaepFromAlgo.doFinal("is this SPARTAAA?".getBytes(StandardCharsets.UTF_8));
+
+            for(byte b: ct) System.err.print((char)b);
+            System.out.println();
 
 // --- decrypt given OAEPParameterSpec
             Cipher oaepFromInit = Cipher.getInstance("RSA/ECB/OAEPPadding");

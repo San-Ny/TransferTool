@@ -26,14 +26,32 @@ public class Main {
                 if (line.equals("exit") || line.equals("quit")) ConsolePrinterUtil.die("bye", 0);
                 else if (line.equals("help")) ConsolePrinterUtil.printLiveHelp();
                 else if (line.equals("scp")) {
-                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
-                    properties = getPropertiesFromArgs(args);
+                    if (ScannerUtil.getVerboseInput("Insert arguments one by one? [Y,n]")){
+                        properties = new Properties();
+                        properties.put("user", ScannerUtil.getLine("Insert user:"));
+                        properties.put("host", ScannerUtil.getLine("Insert host:"));
+                        properties.put("port", ScannerUtil.getLine("Insert port:"));
+                        properties.put("fileLocal", ScannerUtil.getPath("Insert local path to send:"));
+                        properties.put("fileRemote", ScannerUtil.getPath("Insert remote path to set:"));
+                    }
+                    else {
+                        args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                        properties = getPropertiesFromArgs(args);
+                    }
                     if (properties != null) properties.put("Method", "scp");
                     else ConsolePrinterUtil.die("Null arguments", 0);
                     break;
                 }else if (line.equals("sftp")) {
-                    args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
-                    properties = getPropertiesFromArgs(args);
+                    if (ScannerUtil.getVerboseInput("Insert arguments one by one? [Y,n]")){
+                        properties = new Properties();
+                        properties.put("user", ScannerUtil.getLine("Insert user:"));
+                        properties.put("host", ScannerUtil.getLine("Insert host:"));
+                        properties.put("port", ScannerUtil.getLine("Insert port:"));
+                    }
+                    else {
+                        args = ScannerUtil.getLineAsArray("Insert program arguments: ", " ");
+                        properties = getPropertiesFromArgs(args);
+                    }
                     if (properties != null) properties.put("Method", "sftp");
                     else ConsolePrinterUtil.die("Null arguments", 0);
                     break;

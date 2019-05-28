@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public class Test {
+public class TestEncryptDecrypt {
     public static void main(String[] args) {
 
         try{
