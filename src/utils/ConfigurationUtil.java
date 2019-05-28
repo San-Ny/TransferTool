@@ -77,7 +77,7 @@ public class ConfigurationUtil {
             for (String s: defaultConf) publicConfOS.write(s + "\n");
             publicConfOS.close();
         }catch (IOException e){
-            e.printStackTrace();
+            ConsolePrinterUtil.die("Write permission denied, run tool as sudo", -1);
         }
     }
 

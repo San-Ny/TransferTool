@@ -10,12 +10,13 @@ import utils.ConfigurationUtil;
 import utils.ConsolePrinterUtil;
 import utils.ScannerUtil;
 
+import java.io.IOException;
 import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
 
-        Properties properties = new Properties();
+        Properties properties;
 
         if (args.length == 0) {
             ConsolePrinterUtil.println(ConsolePrinterUtil.header);

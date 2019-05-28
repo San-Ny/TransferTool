@@ -41,7 +41,7 @@ function create_file_command {
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
     echo ' echo ${VERSION}' >> ${COMMAND_FILE}
     echo 'else' >> ${COMMAND_FILE}
-    echo " sudo java -jar /usr/share/tp/TransferTool.jar $@" >> ${COMMAND_FILE}
+    echo ' sudo java -jar /usr/share/tp/TransferTool.jar $@' >> ${COMMAND_FILE}
     echo "fi" >> ${COMMAND_FILE}
 }
 
