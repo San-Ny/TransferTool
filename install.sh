@@ -3,7 +3,7 @@
 VERSION=0.0.1
 
 #path vars
-CONFIG_PATH=/etc/transfertool/properties
+CONFIG_PATH=/etc/transfertool
 APPLICATION_PATH=/usr/share/tp
 APPLICATION_SOURCE=/opt/TransferTool
 #file vars
@@ -75,7 +75,7 @@ function download() {
 function move_files() {
     sudo cp ${APPLICATION_SOURCE}/out/artifacts/TransferTool_jar/TransferTool.jar ${APPLICATION_PATH}/TransferTool.jar
     sudo cp ${APPLICATION_SOURCE}/install.sh ${APPLICATION_PATH}/install.sh
-    sudo cp ${APPLICATION_SOURCE}/transfertool.conf ${CONFIG_PATH}
+    sudo cp ${APPLICATION_SOURCE}/transfertool.conf ${CONFIG_PATH}/properties
     yes | sudo cp ${APPLICATION_SOURCE}/tp.1.gz ${MAN_FILE}
     sudo updatedb
 }
