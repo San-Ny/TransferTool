@@ -12,26 +12,26 @@ MAN_FILE=/usr/share/man/man1/tp.1.gz
 
 #file writer with echos
 function create_file_command {
-    echo "#!/bin/bash" >> /usr/bin/tp
-    echo "" >> /usr/bin/tp
-    echo "VERSION=0.0.1" >> /usr/bin/tp
-    echo "" >> /usr/bin/tp
-    echo "CONFIG_PATH=/etc/transfertool" >> /usr/bin/tp
-    echo "APPLICATION_PATH=/usr/share/tp" >> /usr/bin/tp
-    echo "APPLICATION_SOURCE=/opt/TransferTool" >> /usr/bin/tp
-    echo "COMMAND_FILE=/usr/bin/tp" >> /usr/bin/tp
-    echo '' >> /usr/bin/tp
-    echo "function remove_old() {" >> /usr/bin/tp
-    echo '    sudo rm -rf ${APPLICATION_PATH}' >> /usr/bin/tp
-    echo '    sudo rm -rf ${APPLICATION_SOURCE}' >> /usr/bin/tp
-    echo '    sudo rm -rf ${CONFIG_PATH}' >> /usr/bin/tp
-    echo '    sudo rm -rf ${COMMAND_FILE}' >> /usr/bin/tp
-    echo '}' >> /usr/bin/tp
-    echo '' >> /usr/bin/tp
-    echo "function help_message() {" >> /usr/bin/tp
-    echo '    echo -e "tp usage:\n\t help -> this message\n\t version -> current program version\n\t update -> run installation script to get latest release from git\n\t remove -> remove application"' >> /usr/bin/tp
-    echo '}' >> /usr/bin/tp
-    echo '' >> /usr/bin/tp
+    echo "#!/bin/bash" >> ${COMMAND_FILE}
+    echo "" >> ${COMMAND_FILE}
+    echo "VERSION=0.0.1" >> ${COMMAND_FILE}
+    echo "" >> ${COMMAND_FILE}
+    echo "CONFIG_PATH=/etc/transfertool" >> ${COMMAND_FILE}
+    echo "APPLICATION_PATH=/usr/share/tp" >> ${COMMAND_FILE}
+    echo "APPLICATION_SOURCE=/opt/TransferTool" >> ${COMMAND_FILE}
+    echo "COMMAND_FILE=/usr/bin/tp" >> ${COMMAND_FILE}
+    echo '' >> ${COMMAND_FILE}
+    echo "function remove_old() {" >> ${COMMAND_FILE}
+    echo '    sudo rm -rf ${APPLICATION_PATH}' >> ${COMMAND_FILE}
+    echo '    sudo rm -rf ${APPLICATION_SOURCE}' >> ${COMMAND_FILE}
+    echo '    sudo rm -rf ${CONFIG_PATH}' >> ${COMMAND_FILE}
+    echo '    sudo rm -rf ${COMMAND_FILE}' >> ${COMMAND_FILE}
+    echo '}' >> ${COMMAND_FILE}
+    echo '' >> ${COMMAND_FILE}
+    echo "function help_message() {" >> ${COMMAND_FILE}
+    echo '    echo -e "tp usage:\n\t help -> this message\n\t version -> current program version\n\t update -> run installation script to get latest release from git\n\t remove -> remove application"' >> ${COMMAND_FILE}
+    echo '}' >> ${COMMAND_FILE}
+    echo '' >> ${COMMAND_FILE}
     echo 'if [[ $1 == "update" ]]; then' >> ${COMMAND_FILE}
     echo " sudo /usr/share/tp/install.sh" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "remove" ]]; then' >> ${COMMAND_FILE}
@@ -39,26 +39,10 @@ function create_file_command {
     echo 'elif [[ $1 == "help" ]]; then' >> ${COMMAND_FILE}
     echo " help_message" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
-    echo ' echo ${VERSION}' >> ${COMMAND_FILE}
+    echo ' echo "Current installed version of TransferTool -> ${VERSION}"' >> ${COMMAND_FILE}
     echo 'else' >> ${COMMAND_FILE}
     echo ' sudo java -jar /usr/share/tp/TransferTool.jar $@' >> ${COMMAND_FILE}
     echo "fi" >> ${COMMAND_FILE}
-}
-
-function create_man_page() {
-    echo 'Manpage for tp.' >> ${MAN_FILE}
-    echo ' code on https://github.com/San-Ny/TransferTool' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
-    echo '' >> ${MAN_FILE}
 }
 
 #create needed dirs
@@ -74,6 +58,7 @@ function remove_old() {
     sudo rm -rf ${APPLICATION_SOURCE}
     sudo rm -rf ${CONFIG_PATH}
     sudo rm -rf ${COMMAND_FILE}
+    sudo rm -rf ${MAN_FILE}
 }
 
 function update_permissions() {
@@ -88,10 +73,10 @@ function download() {
 }
 
 function move_files() {
-    sudo cp /opt/TransferTool/out/artifacts/TransferTool_jar/TransferTool.jar /usr/share/tp/TransferTool.jar
-    sudo cp /opt/TransferTool/install.sh /usr/share/tp/install.sh
-    sudo cp /opt/TransferTool/transfertool.conf ${CONFIG_PATH}
-    yes | sudo cp /opt/TransferTool/tp.1.gz ${MAN_FILE}
+    sudo cp ${APPLICATION_SOURCE}/out/artifacts/TransferTool_jar/TransferTool.jar ${APPLICATION_PATH}/TransferTool.jar
+    sudo cp ${APPLICATION_SOURCE}/install.sh ${APPLICATION_PATH}/install.sh
+    sudo cp ${APPLICATION_SOURCE}/transfertool.conf ${CONFIG_PATH}
+    yes | sudo cp ${APPLICATION_SOURCE}/tp.1.gz ${MAN_FILE}
     sudo updatedb
 }
 
