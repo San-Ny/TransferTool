@@ -16,6 +16,8 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import static utils.ConfigurationUtil.*;
+
 /**
  * @author san
  * @version 0.0.1
@@ -180,10 +182,10 @@ public class PathFinderUtil {
         if (hasAsterisk(path.toString())) {
             recursive = true;
             path = Path.of(removeAsterisk(path.toString()));
-            if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) System.out.println("PathFinderUtil -> asterisk found -> removing: new path = '" + path.toString() + "'");
+            if (getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) System.out.println("PathFinderUtil -> asterisk found -> removing: new path = '" + path.toString() + "'");
         }
 
-        if (ConfigurationUtil.getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) System.out.println("PathFinderUtil ->\n\trecursive =" + recursive + ";\n\tverbose =" + verbose + ";\n\tfinal bar=" + hasFinalBar(path.toString()) + ";\n\tis valid=" + isValidPath(path.toString()));
+        if (getPropertyOrDefault("Debugging", "0").equals("1") || properties.getProperty("Debugging").equals("1")) System.out.println("PathFinderUtil ->\n\trecursive =" + recursive + ";\n\tverbose =" + verbose + ";\n\tfinal bar=" + hasFinalBar(path.toString()) + ";\n\tis valid=" + isValidPath(path.toString()));
 
         //choosing correct path returner
 

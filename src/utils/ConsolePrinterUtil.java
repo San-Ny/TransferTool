@@ -110,13 +110,13 @@ public class ConsolePrinterUtil {
     }
 
     public static void printHelp(int status){
-            ConsolePrinterUtil.println(helpMessage);
+            println(helpMessage);
             System.exit(status);
     }
     public static void printHelp(){
-            ConsolePrinterUtil.println(helpMessage);
+            println(helpMessage);
     }
     public static void printLiveHelp(){
-            ConsolePrinterUtil.println(helpLiveMessage);
+            println(helpLiveMessage);
     }
 }

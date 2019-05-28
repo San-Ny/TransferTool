@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import static utils.ArgumentReaderUtil.*;
 import static utils.ConsolePrinterUtil.*;
 import static utils.PathFinderUtil.*;
 
@@ -33,7 +34,7 @@ public class SCPSender extends Thread {
 
         //checking required arguments
         String[] requiredProperties = {"user", "port", "host", "fileLocal", "fileRemote"};
-        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)) die(SCPSender.class,"Missing required arguments", 0);
+        if (isNotValid(properties, requiredProperties)) die(SCPSender.class,"Missing required arguments", 0);
 
 
         //assignation

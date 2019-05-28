@@ -1,10 +1,10 @@
 package parallelshell;
 
-import utils.ConsolePrinterUtil;
-import utils.ScannerUtil;
-
 import java.util.HashMap;
 import java.util.Properties;
+
+import static utils.ConsolePrinterUtil.*;
+import static utils.ScannerUtil.*;
 
 /**
  * NOTICE ALL HOSTS MUST KNOW THE MAIN HOST KEY or password will be asked
@@ -33,14 +33,14 @@ public class ParallelSessionController extends Thread{
             //inserting hosts
             hosts = new HashMap<>();
             while (true){
-                String option = ScannerUtil.getLine("  1 Insert Host\n  2 Remove host\n  3 list hosts\n  4 Finish\n  5 Cancel\n" + ConsolePrinterUtil.getCommandInput());
+                String option = getLine("  1 Insert Host\n  2 Remove host\n  3 list hosts\n  4 Finish\n  5 Cancel\n" + getCommandInput());
                 if (option.equals("1")){
-                    hosts.put(ScannerUtil.getLine("User:"), ScannerUtil.getLine("Host:"));
+                    hosts.put(getLine("User:"), getLine("Host:"));
                 }else if (option.equals("2")){
-                    hosts.remove(ScannerUtil.getLine("User:"), ScannerUtil.getLine("Host:"));
+                    hosts.remove(getLine("User:"), getLine("Host:"));
                 }else if (option.equals("3")) hosts.forEach((v, k) -> System.out.println("\t\tU:" + v + "\t\tH:" + k));
                 else if (option.equals("4")) break;
-                else if (option.equals("5")) ConsolePrinterUtil.die("bye", 0);
+                else if (option.equals("5")) die("bye", 0);
             }
         }
 

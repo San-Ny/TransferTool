@@ -7,6 +7,7 @@ import utils.ScannerUtil;
 import java.util.Properties;
 
 import static java.lang.Integer.*;
+import static utils.ScannerUtil.*;
 
 public class SSH2User implements UserInfo, UIKeyboardInteractive {
 
@@ -26,7 +27,7 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
         try{
             return ScannerUtil.getPassword();
         }catch (TransferToolException e){
-            return ScannerUtil.getLine("Error with password input; Enter Password as plain text: ");
+            return getLine("Error with password input; Enter Password as plain text: ");
         }
     }
 
@@ -44,7 +45,7 @@ public class SSH2User implements UserInfo, UIKeyboardInteractive {
 
     @Override
     public boolean promptYesNo(String msg) {
-        return ScannerUtil.getVerboseInput(msg + " [Y/n]");
+        return getVerboseInput(msg + " [Y/n]");
     }
 
     @Override

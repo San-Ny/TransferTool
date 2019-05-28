@@ -6,12 +6,11 @@ import secureshell.SecureShell;
 import sftpsender.SFTPSender;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
-import utils.ConfigurationUtil;
-import utils.ConsolePrinterUtil;
 import utils.ScannerUtil;
-
-import java.io.IOException;
 import java.util.Properties;
+
+import static utils.ConfigurationUtil.*;
+import static utils.ConsolePrinterUtil.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,12 +18,12 @@ public class Main {
         Properties properties;
 
         if (args.length == 0) {
-            ConsolePrinterUtil.println(ConsolePrinterUtil.header);
+            println(header);
             String line;
             while (true){
-                line = ScannerUtil.getLine(ConsolePrinterUtil.getCommandInput());
-                if (line.equals("exit") || line.equals("quit")) ConsolePrinterUtil.die("bye", 0);
-                else if (line.equals("help")) ConsolePrinterUtil.printLiveHelp();
+                line = ScannerUtil.getLine(getCommandInput());
+                if (line.equals("exit") || line.equals("quit")) die("bye", 0);
+                else if (line.equals("help")) printLiveHelp();
                 else if (line.equals("scp")) {
                     if (ScannerUtil.getVerboseInput("Insert arguments one by one? [Y,n]")){
                         properties = new Properties();
@@ -39,7 +38,7 @@ public class Main {
                         properties = getPropertiesFromArgs(args);
                     }
                     if (properties != null) properties.put("Method", "scp");
-                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    else die("Null arguments", 0);
                     break;
                 }else if (line.equals("sftp")) {
                     if (ScannerUtil.getVerboseInput("Insert arguments one by one? [Y,n]")){
@@ -53,7 +52,7 @@ public class Main {
                         properties = getPropertiesFromArgs(args);
                     }
                     if (properties != null) properties.put("Method", "sftp");
-                    else ConsolePrinterUtil.die("Null arguments", 0);
+                    else die("Null arguments", 0);
                     break;
                 }
                 else if (line.equals("shell") || line.equals("ssh")) {
@@ -104,10 +103,10 @@ public class Main {
 //            if (ArgumentReaderUtil.isOneValid(properties, required)) ConsolePrinterUtil.die("Method required; use -scp, -sftp, -shell or -pssh on arguments to define one", 0);
 
         if (properties == null) {
-            ConsolePrinterUtil.println("Transfer command not found");
+            println("Transfer command not found");
             System.exit(0);
         }
-        if (!properties.containsKey("Method")) ConsolePrinterUtil.die("method not defined", -1);
+        if (!properties.containsKey("Method")) die("method not defined", -1);
 
         if (properties.getProperty("Method").equals("scp")){
             SCPSender scpSender = new SCPSender(properties);
@@ -154,9 +153,9 @@ public class Main {
         try{
             return ArgumentReaderUtil.getParams(args);
         }catch (WrongArgumentException we){
-            if(ConfigurationUtil.getPropertyOrDefault("Debugger", "ON").equals("OFF"))
-                ConsolePrinterUtil.die(SCPSender.class, we.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
-            else ConsolePrinterUtil.die("Error reading arguments, Enable Debugger on TransferTool.conf", -1);
+            if(getPropertyOrDefault("Debugger", "ON").equals("OFF"))
+                die(SCPSender.class, we.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else die("Error reading arguments, Enable Debugger on TransferTool.conf", -1);
         }
         return null;
     }

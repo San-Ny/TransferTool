@@ -3,11 +3,12 @@ package sftpsender;
 import com.jcraft.jsch.*;
 import pojos.MyProgressMonitor;
 import pojos.SSH2User;
-import utils.ArgumentReaderUtil;
 
 import java.io.*;
 import java.util.Properties;
 import java.util.Vector;
+
+import static utils.ArgumentReaderUtil.*;
 
 /**
  * TransferTool
@@ -31,7 +32,7 @@ public class SFTPSender extends Thread {
         //checking required arguments
         String[] requiredProperties = {"user", "port", "host"};
 
-        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)){
+        if (isNotValid(properties, requiredProperties)){
             System.err.println("Missing required arguments");
             System.exit(0);
         }
@@ -46,7 +47,7 @@ public class SFTPSender extends Thread {
 
         try{
             Session session = SSH2User.sshUser(user, port, host, debugging, properties);
-            Channel channel = null;
+            Channel channel;
             ChannelSftp sftp;
 
             session.connect();

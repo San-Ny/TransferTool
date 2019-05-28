@@ -5,10 +5,11 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import pojos.SSH2User;
 import sshsender.SCPSender;
-import utils.ArgumentReaderUtil;
-import utils.ConsolePrinterUtil;
 
 import java.util.Properties;
+
+import static utils.ArgumentReaderUtil.*;
+import static utils.ConsolePrinterUtil.*;
 
 public class SecureShell extends Thread {
 
@@ -23,7 +24,7 @@ public class SecureShell extends Thread {
 //        super.run();
         String[] requiredProperties = {"user", "host"};
 
-        if (ArgumentReaderUtil.isNotValid(properties, requiredProperties)) ConsolePrinterUtil.die(SCPSender.class,"Missing required arguments", 0);
+        if (isNotValid(properties, requiredProperties)) die(SCPSender.class,"Missing required arguments", 0);
 
         //assignation
         String user, port, host;
@@ -39,8 +40,8 @@ public class SecureShell extends Thread {
             try{
                 session.connect();
             }catch(final JSchException jex){
-                if (debugging) ConsolePrinterUtil.die(SCPSender.class, jex.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
-                else ConsolePrinterUtil.die(SCPSender.class,"Connection failed", -1);
+                if (debugging) die(SCPSender.class, jex.getMessage(),-1, Thread.currentThread().getStackTrace()[1].getLineNumber());
+                else die(SCPSender.class,"Connection failed", -1);
             }
 
             Channel channel = session.openChannel("shell");
@@ -57,8 +58,8 @@ public class SecureShell extends Thread {
 
 
         }catch (JSchException e){
-            if (debugging)ConsolePrinterUtil.printDebugging(SCPSender.class, e.getMessage(), Thread.currentThread().getStackTrace()[1].getLineNumber());
-            else ConsolePrinterUtil.die(SCPSender.class,"Transfer failed", 0);
+            if (debugging) printDebugging(SCPSender.class, e.getMessage(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            else die(SCPSender.class,"Transfer failed", 0);
         }
     }
 }

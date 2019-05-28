@@ -4,6 +4,8 @@ import exceptions.TransferToolException;
 import java.io.Console;
 import java.util.Scanner;
 
+import static utils.ConsolePrinterUtil.*;
+
 /**
  * @author san
  * @version 0.0.1
@@ -26,7 +28,7 @@ public class ScannerUtil {
         return sc.nextInt();
     }
     public static int getInt(String msg){
-        ConsolePrinterUtil.print(msg);
+        print(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextInt();
     }
@@ -34,10 +36,10 @@ public class ScannerUtil {
     public static String getPath(String path) {
         Scanner sc = new Scanner(System.in);
         while (true){
-            ConsolePrinterUtil.println(path);
+            println(path);
             String line = sc.nextLine();
             if (PathFinderUtil.isValidPath(line)) return line;
-            ConsolePrinterUtil.printEln("Invalid path");
+            printEln("Invalid path");
         }
     }
 
@@ -47,7 +49,7 @@ public class ScannerUtil {
      * @return String with the input
      */
     public static String getLine(String msg){
-        ConsolePrinterUtil.print(msg);
+        print(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
@@ -58,7 +60,7 @@ public class ScannerUtil {
      * @return String with the input
      */
     public static String[] getLineAsArray(String msg, String regex){
-        ConsolePrinterUtil.print(msg);
+        print(msg);
         Scanner sc = new Scanner(System.in);
         return sc.nextLine().split(regex);
     }
