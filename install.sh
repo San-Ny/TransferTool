@@ -3,7 +3,7 @@
 VERSION=0.0.1
 
 #path vars
-CONFIG_PATH=/etc/transfertool
+CONFIG_PATH=/etc/transfertool/properties
 APPLICATION_PATH=/usr/share/tp
 APPLICATION_SOURCE=/opt/TransferTool
 #file vars
