@@ -1,27 +1,13 @@
 package main;
 
-import exceptions.TransferToolException;
 import parallelshell.ParallelSessionController;
 import exceptions.WrongArgumentException;
 import secureshell.SecureShell;
 import sftpsender.SFTPSender;
 import sshsender.SCPSender;
 import utils.ArgumentReaderUtil;
-import utils.EncryptionUtil;
-import utils.PathFinderUtil;
 import utils.ScannerUtil;
-
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import java.io.*;
-import java.nio.file.Path;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Objects;
 import java.util.Properties;
-
-import static utils.ArgumentReaderUtil.isNotValid;
-import static utils.ArgumentReaderUtil.isOneValid;
 import static utils.ConfigurationUtil.*;
 import static utils.ConsolePrinterUtil.*;
 
@@ -146,23 +132,24 @@ public class Main {
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
-        }else if (properties.getProperty("Method").equals("pssh")){
+        }else if (properties.getProperty("Method").equals("pssh")) {
             ParallelSessionController parallelSessionController = new ParallelSessionController(properties);
             parallelSessionController.run();
-            try{
+            try {
                 parallelSessionController.join();
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }else if (properties.getProperty("Method").equals("encrypt")){
-            String[] requiredProperties = {"fileLocal", "Interactive"};
-            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
-            encryptCall(properties);
-        }else if (properties.getProperty("Method").equals("decrypt")){
-            String[] requiredProperties = {"fileLocal", "Interactive"};
-            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
-            decryptCall(properties);
         }
+//        }else if (properties.getProperty("Method").equals("encrypt")){
+//            String[] requiredProperties = {"fileLocal", "Interactive"};
+//            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
+//            encryptCall(properties);
+//        }else if (properties.getProperty("Method").equals("decrypt")){
+//            String[] requiredProperties = {"fileLocal", "Interactive"};
+//            if (!isOneValid(properties, requiredProperties)) die(Main.class,"Missing required arguments", 0);
+//            decryptCall(properties);
+//        }
 
     }
 
@@ -177,59 +164,78 @@ public class Main {
         return null;
     }
 
-    private static void encryptCall(Properties properties){
-        if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
-
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH))) {
-            RSAPublicKey publicKey = (RSAPublicKey) inputStream.readObject();
-            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
-                while (true) {
-                    String line = ScannerUtil.getLine("Text to encrypt (n to exit):");
-                    if (line.equals("n")) die(0);
-                    printByteEncrypted(Objects.requireNonNull(EncryptionUtil.encryptString(line, publicKey)));
-                }
-            } else {
-                try {
-                    CipherOutputStream out = new CipherOutputStream(new FileOutputStream(new File(properties.get("fileLocal") +".encrypted")), EncryptionUtil.getEncryptionCipher(publicKey));
-                    BufferedInputStream in = new BufferedInputStream(new FileInputStream((String)properties.get("fileLocal")));
-                    int i;
-                    while ((i = in.read()) != -1)
-                        out.write(i);
-                    out.flush();
-                    die("File encrypted " + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
-                } catch (IOException | TransferToolException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void decryptCall(Properties properties) {
-        if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
-
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH))) {
-            RSAPrivateKey privateKey = (RSAPrivateKey) inputStream.readObject();
-            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
-                while (true) {
-                    String line = ScannerUtil.getLine("Text to decrypt (n to exit):");
-                    if (line.equals("n")) die(0);
-                    println(EncryptionUtil.decryptString(line, privateKey));
-                }
-            } else {
-                try {
-                    CipherInputStream in = new CipherInputStream(new FileInputStream((String) properties.get("fileLocal")), EncryptionUtil.getDecryptionCipher(privateKey));
-                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(properties.get("fileLocal") +".decrypted"));
-                    int i;
-                    while ((i = in.read()) != -1) bufferedOutputStream.write(i);
-                    die("File decrypted " + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+//    private static void encryptCall(Properties properties){
+//        if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
+//
+//        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH))) {
+//            RSAPublicKey publicKey = (RSAPublicKey) inputStream.readObject();
+//            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
+//                while (true) {
+//                    String line = ScannerUtil.getLine("Text to encrypt (n to exit):");
+//                    if (line.equals("n")) die(0);
+//                    printByteEncrypted(requireNonNull(EncryptionUtil.encryptString(line, publicKey)));
+//                }
+//            } else {
+//                try {
+//                    File fileOut = new File(properties.get("fileLocal") +".encrypted");
+//                    File fileIn = new File((String)properties.get("fileLocal"));
+//                    DataOutputStream out = new DataOutputStream(new FileOutputStream(fileOut));
+//                    DataInputStream in = new DataInputStream(new FileInputStream(fileIn));
+//                    long size = fileIn.length();
+//                    out.writeLong(size);
+//                    byte[] data = new byte[190];
+//                    while (in.read(data) != -1) out.write(EncryptionUtil.encrypt(data, publicKey));
+//                    out.flush();
+//                    die("File encrypted " + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (IOException | ClassNotFoundException | TransferToolException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private static void decryptCall(Properties properties) {
+//        if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
+//
+//        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH))) {
+//            RSAPrivateKey privateKey = (RSAPrivateKey) inputStream.readObject();
+//            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
+//                while (true) {
+//                    String line = ScannerUtil.getLine("Text to decrypt (n to exit):");
+//                    if (line.equals("n")) die(0);
+//                    println(new String(requireNonNull(EncryptionUtil.decryptString(line, privateKey)), StandardCharsets.UTF_8));
+//                }
+//            } else {
+//                try {
+//                    File fileOut = new File(properties.get("fileLocal") +".decrypted");
+//                    File fileIn = new File((String)properties.get("fileLocal"));
+//                    DataOutputStream out = new DataOutputStream(new FileOutputStream(fileOut));
+//                    DataInputStream in = new DataInputStream(new FileInputStream(fileIn));
+//                    long size = in.readLong();
+//                    int buffer = 190;
+//                    while(size > buffer){
+//                        byte[] data = new byte[buffer];
+//                        for (int c = 0; c < data.length; c++) data[c] = in.readByte();
+//                        size -= buffer;
+//                        data = EncryptionUtil.decrypt(data, privateKey);
+//                        out.write(data);
+//                        out.flush();
+//                    }
+//                    buffer = toIntExact(size);
+//                    byte[] data = new byte[buffer];
+//                    for (int c = 0; c < data.length; c++) data[c] = in.readByte();
+//                    data = EncryptionUtil.decrypt(data, privateKey);
+//                    out.write(data);
+//                    out.flush();
+//                    die("File decrypted " + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

@@ -73,7 +73,7 @@ public class EncryptionUtil {
      * @param key : The public key
      * @return Encrypted text
      */
-    public static byte[] encryptString(String text, PublicKey key) {
+    public static byte[] encryptString(String text, PublicKey key) throws TransferToolException {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM_ENCRYPT);
             cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -81,7 +81,27 @@ public class EncryptionUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        throw new TransferToolException("Unable to return cipher");
+    }
+
+    public static byte[] encrypt(byte[] text, PublicKey key) throws TransferToolException {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM_ENCRYPT);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new TransferToolException("Unable to return cipher");
+    }
+
+    public static byte[] encrypt(byte[] text, Cipher cipher) throws TransferToolException {
+        try {
+            return cipher.doFinal(text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new TransferToolException("Unable to return cipher");
     }
 
     public static Cipher getEncryptionCipher(PublicKey key) throws TransferToolException {
@@ -114,13 +134,12 @@ public class EncryptionUtil {
      * @param key :The private key
      * @return plain text
      */
-    public static String decryptString(String text, PrivateKey key) {
+    public static byte[] decryptString(String text, PrivateKey key) {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
             OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
             cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
-            byte[] pt = cipher.doFinal(text.getBytes());
-            return new String(pt, StandardCharsets.UTF_8);
+            return cipher.doFinal(text.getBytes());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -128,12 +147,11 @@ public class EncryptionUtil {
     }
 
     public static byte[] decrypt(byte[] text, PrivateKey key) {
-        try { //ConfigurationUtil.getPropertyOrDefault("", "")
+        try {
             Cipher cipher = Cipher.getInstance(ALGORITHM_DECRYPT);
             OAEPParameterSpec oaepParams = new OAEPParameterSpec(ConfigurationUtil.getPropertyOrDefault("OAEPParameterMdName", "SHA-256"), ConfigurationUtil.getPropertyOrDefault("OAEPParameterMgfName", "MGF1"), new MGF1ParameterSpec(ConfigurationUtil.getPropertyOrDefault("MGF1ParameterMdName", "SHA-1")), PSource.PSpecified.DEFAULT);
             cipher.init(Cipher.DECRYPT_MODE, key, oaepParams);
             return cipher.doFinal(text);
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }

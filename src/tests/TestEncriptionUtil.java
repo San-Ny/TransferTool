@@ -1,11 +1,13 @@
 package tests;
 
+import exceptions.TransferToolException;
 import utils.EncryptionUtil;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 
 public class TestEncriptionUtil {
     public static void main(String[] args) {
@@ -32,9 +34,15 @@ public class TestEncriptionUtil {
             System.exit(-1);
         }
 
-        byte[] encripted = EncryptionUtil.encryptString("cactus",publicKey);
+        byte[] encripted = new byte[0];
+        try {
+            encripted = EncryptionUtil.encryptString("cactus",publicKey);
+        } catch (TransferToolException e) {
+            e.printStackTrace();
+        }
 
-        System.out.println(EncryptionUtil.decrypt(encripted, privateKey));
+        System.out.println(Arrays.toString(EncryptionUtil.decrypt(encripted, privateKey)));
+
 
     }
 }
