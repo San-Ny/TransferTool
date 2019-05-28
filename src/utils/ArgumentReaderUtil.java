@@ -65,15 +65,15 @@ public class ArgumentReaderUtil {
         for (int a = 0; a < args.length; a++){
             if (args[a].equals("-R") || args[a].equals("--host")) properties.put("host",args[++a]);
             else if (args[a].equals("-p") || args[a].equals("--port")) properties.put("port",args[++a]);
-            else if (args[a].equals("-fl")) properties.put("fileLocal",args[++a]);
-            else if (args[a].equals("-fr")) properties.put("fileRemote",args[++a]);
-            else if (args[a].equals("-scp")) properties.put("Method", "scp");
+            else if (args[a].equals("-fl") || args[a].equals("-localFile")) properties.put("fileLocal",args[++a]);
+            else if (args[a].equals("-fr") || args[a].equals("-remoteFile")) properties.put("fileRemote",args[++a]);
+            else if (args[a].equals("-scp") || args[a].equals("-secureCopy")) properties.put("Method", "scp");
             else if (args[a].equals("-sftp")) properties.put("Method", "sftp");
-            else if (args[a].equals("-pssh")) properties.put("Method", "pssh");
+            else if (args[a].equals("-pssh") || args[a].equals("-parallelShell")) properties.put("Method", "pssh");
             else if (args[a].equals("-shell") || args[a].equals("-ssh")) properties.put("Method", "shell");
             else if (args[a].equals("-h") || args[a].equals("--help")) printHelp();
-            else if (args[a].equals("-s")) properties.put("StrictHostKeyChecking", "yes");
-            else if (args[a].equals("-w")) properties.put("StrictHostKeyChecking", "no");
+            else if (args[a].equals("-s") || args[a].equals("-StrictHostKeyCheckingYes")) properties.put("StrictHostKeyChecking", "yes");
+            else if (args[a].equals("-w") || args[a].equals("-StrictHostKeyCheckingNo")) properties.put("StrictHostKeyChecking", "no");
             else if (args[a].equals("-W")){
                 String[] hpCommand = args[++a].split(":");
                 if (hpCommand.length != 2) throw new WrongArgumentException("Wrong parameter on arguments:\n\t-W host[:port]");
