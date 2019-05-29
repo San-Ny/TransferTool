@@ -160,4 +160,11 @@ public class ArgumentReaderUtil {
         }
         return hosts;
     }
+
+    /**
+     *
+     */
+    public static void debugProperties(Properties properties){
+        properties.forEach((k, v) -> ConsolePrinterUtil.printDebugging(ArgumentReaderUtil.class,k + ":" + v));
+    }
 }
