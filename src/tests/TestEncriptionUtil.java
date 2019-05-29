@@ -41,7 +41,11 @@ public class TestEncriptionUtil {
             e.printStackTrace();
         }
 
-        System.out.println(Arrays.toString(EncryptionUtil.decrypt(encripted, privateKey)));
+        try {
+            System.out.println(Arrays.toString(EncryptionUtil.decrypt(encripted, privateKey)));
+        } catch (TransferToolException e) {
+            e.printStackTrace();
+        }
 
 
     }
