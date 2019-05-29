@@ -1,9 +1,17 @@
 package utils;
 
 import com.jcraft.jsch.Session;
-
 import java.util.Arrays;
 
+/**
+ * TransferTool
+ * @version 0.0.1
+ *
+ * @version openjdk version "10.0.2" 2018-07-17
+ *
+ * @author   Toni <tonimercer300@gmail.com>
+ * license   MIT <https://mit-license.org/>
+ */
 public class ConsolePrinterUtil {
 
     private static final String ANSI_RESET = "\u001B[0m";

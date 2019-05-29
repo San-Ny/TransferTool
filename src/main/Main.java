@@ -13,6 +13,12 @@ import static utils.ConfigurationUtil.*;
 import static utils.ConsolePrinterUtil.*;
 import static utils.EncryptionUtil.*;
 
+/**
+ * @author san
+ * @version 0.0.1
+ *
+ * license MIT <https://mit-license.org/>
+ */
 public class Main {
     public static void main(String[] args) {
 

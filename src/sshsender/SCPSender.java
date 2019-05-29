@@ -2,7 +2,6 @@ package sshsender;
 
 import com.jcraft.jsch.*;
 import pojos.SSH2User;
-import utils.*;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -15,6 +14,7 @@ import static utils.PathFinderUtil.*;
 
 /**
  * TransferTool
+ * @version 0.0.1
  *
  * @version openjdk version "10.0.2" 2018-07-17
  *

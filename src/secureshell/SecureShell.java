@@ -5,12 +5,19 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import pojos.SSH2User;
 import sshsender.SCPSender;
-
 import java.util.Properties;
-
 import static utils.ArgumentReaderUtil.*;
 import static utils.ConsolePrinterUtil.*;
 
+/**
+ * TransferTool
+ * @version 0.0.1
+ *
+ * @version openjdk version "10.0.2" 2018-07-17
+ *
+ * @author   Toni <tonimercer300@gmail.com>
+ * license   MIT <https://mit-license.org/>
+ */
 public class SecureShell extends Thread {
 
     private Properties properties;

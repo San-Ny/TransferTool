@@ -9,6 +9,15 @@ import static utils.ScannerUtil.*;
 /**
  * NOTICE ALL HOSTS MUST KNOW THE MAIN HOST KEY or password will be asked
  */
+/**
+ * TransferTool
+ * @version 0.0.1
+ *
+ * @version openjdk version "10.0.2" 2018-07-17
+ *
+ * @author   Toni <tonimercer300@gmail.com>
+ * license   MIT <https://mit-license.org/>
+ */
 public class ParallelSessionController extends Thread{
 
     private Properties properties;
