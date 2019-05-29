@@ -7,9 +7,15 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.*;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.MGF1ParameterSpec;
+import java.util.Arrays;
+import java.util.Properties;
 
+import static java.util.Objects.requireNonNull;
 import static utils.ConsolePrinterUtil.*;
 
 public class EncryptionUtil {
@@ -156,5 +162,80 @@ public class EncryptionUtil {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public static void encryptFile(Properties properties){
+        if (!EncryptionUtil.areKeysPresent()) EncryptionUtil.generateKey();
+
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PUBLIC_KEY_PATH))) {
+            RSAPublicKey publicKey = (RSAPublicKey) inputStream.readObject();
+            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
+                while (true) {
+                    String line = ScannerUtil.getLine("Text to encrypt (n to exit):");
+                    if (line.equals("n")) die(0);
+                    printByteEncrypted(requireNonNull(EncryptionUtil.encryptString(line, publicKey)));
+                }
+            } else {
+                try {
+                    File fileOut = new File(properties.get("fileLocal") +".encrypted");
+                    File fileIn = new File((String)properties.get("fileLocal"));
+                    DataOutputStream out = new DataOutputStream(new FileOutputStream(fileOut));
+                    BufferedReader in = new BufferedReader(new FileReader(fileIn));
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        byte[] cipherText = EncryptionUtil.encryptString(line, publicKey);
+                        out.writeInt(cipherText.length);
+                        System.out.println(Arrays.toString(cipherText));
+                        for (byte b: cipherText) out.writeByte((int)b);
+                        out.flush();
+                    }
+                    in.close();
+                    out.close();
+                    die("File encrypted " + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException | ClassNotFoundException | TransferToolException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void decryptFile(Properties properties) {
+
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(EncryptionUtil.PRIVATE_KEY_PATH))) {
+            RSAPrivateKey privateKey = (RSAPrivateKey) inputStream.readObject();
+            if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
+                while (true) {
+                    String line = ScannerUtil.getLine("Text to decrypt (n to exit):");
+                    if (line.equals("n")) die(0);
+                    println(new String(requireNonNull(EncryptionUtil.decryptString(line, privateKey)), StandardCharsets.UTF_8));
+                }
+            } else {
+                try {
+                    File fileOut = new File(properties.get("fileLocal") +".decrypted");
+                    File fileIn = new File((String)properties.get("fileLocal"));
+                    BufferedWriter out = new BufferedWriter(new FileWriter(fileOut));
+                    DataInputStream in = new DataInputStream(new FileInputStream(fileIn));
+                    while(in.available() != 0){
+                        int a = in.readInt();
+                        byte[] data = new byte[a];
+                        for(int c = 0; c < a; c++) data[c] = in.readByte();
+                        byte[] returned = EncryptionUtil.decrypt(data, privateKey);
+                        assert returned != null;
+                        for (int i:returned) out.write((char)i);
+                        out.flush();
+                        out.newLine();
+                    }
+                    in.close();
+                    out.close();
+                    die("File decrypted" + PathFinderUtil.getPathFileName(Path.of((String) properties.get("fileLocal"))), 0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
