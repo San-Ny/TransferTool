@@ -2,6 +2,8 @@ package utils;
 
 import com.jcraft.jsch.Session;
 
+import java.util.Arrays;
+
 public class ConsolePrinterUtil {
 
     private static final String ANSI_RESET = "\u001B[0m";
@@ -80,7 +82,7 @@ public class ConsolePrinterUtil {
 
     public static void printByteEncrypted(byte[] msg){
         System.out.print(ANSI_CYAN);
-        for (byte c: msg) print((char)c);
+        System.out.println(Arrays.toString(msg));
         System.out.println(ANSI_RESET);
 
     }

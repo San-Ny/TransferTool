@@ -185,7 +185,6 @@ public class EncryptionUtil {
                     while ((line = in.readLine()) != null){
                         byte[] cipherText = EncryptionUtil.encryptString(line, publicKey);
                         out.writeInt(cipherText.length);
-                        System.out.println(Arrays.toString(cipherText));
                         for (byte b: cipherText) out.writeByte((int)b);
                         out.flush();
                     }
@@ -207,13 +206,16 @@ public class EncryptionUtil {
             RSAPrivateKey privateKey = (RSAPrivateKey) inputStream.readObject();
             if (properties.containsKey("Interactive") && properties.getProperty("Interactive").equals("1")) {
                 while (true) {
-                    String line = ScannerUtil.getLine("Text to decrypt (n to exit):");
+                    String line = ScannerUtil.getLine("Array to decrypt (n to exit):");
                     if (line.equals("n")) die(0);
-                    println(new String(requireNonNull(EncryptionUtil.decryptString(line, privateKey)), StandardCharsets.UTF_8));
+                    String[] unparsedData = line.trim().replace("[", "").replace("]", "").split("[,]");
+                    byte[] data = new byte[unparsedData.length];
+                    for(int c = 0; c < data.length; c++) data[c] = Byte.valueOf(unparsedData[c].trim());
+                    println(new String(requireNonNull(EncryptionUtil.decrypt(data, privateKey)), StandardCharsets.UTF_8));
                 }
             } else {
                 try {
-                    File fileOut = new File(properties.get("fileLocal") +".decrypted");
+                    File fileOut = new File(PathFinderUtil.removeExtension((String)properties.get("fileLocal")) + ".decrypted.txt");
                     File fileIn = new File((String)properties.get("fileLocal"));
                     BufferedWriter out = new BufferedWriter(new FileWriter(fileOut));
                     DataInputStream in = new DataInputStream(new FileInputStream(fileIn));
