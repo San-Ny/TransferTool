@@ -42,7 +42,6 @@ function create_file_command {
     echo ' echo "Current installed version of TransferTool -> ${VERSION}"' >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "nogui" ]]; then' >> ${COMMAND_FILE}
     echo ' sudo java -jar /usr/share/tp/TransferTool.jar $@' >> ${COMMAND_FILE}
-    echo "fi" >> ${COMMAND_FILE}
     echo 'else' >> ${COMMAND_FILE}
     echo ' sudo ./usr/share/tp/tp' >> ${COMMAND_FILE}
     echo "fi" >> ${COMMAND_FILE}
