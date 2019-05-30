@@ -56,7 +56,7 @@ void loggin::on_btn_logging_loggin_clicked()
     char* passwd = const_cast<char*>(s_passwd.c_str());
 
     //empty strings
-    if(user == "" && s_passwd == "")
+    if(user == "" || s_passwd == "")
     {
         qDebug() << "empty fields!";
         return;
