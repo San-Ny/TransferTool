@@ -2,6 +2,21 @@ Library examples:
     - http://www.jcraft.com/jsch/examples/
 
 
+dependencies
+cmake Could not find OpenSSL
+sudo apt-get install libssl-dev
+
+Cmoka
+https://cmocka.org/
+
+sshlib
+https://www.libssh.org/
+
+cannot find -lGL
+sudo apt-get install libglu1-mesa-dev
+
+
+
 -------installation
  vsftp to SFTP for test!! process::
 
