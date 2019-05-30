@@ -40,8 +40,11 @@ function create_file_command {
     echo " help_message" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
     echo ' echo "Current installed version of TransferTool -> ${VERSION}"' >> ${COMMAND_FILE}
-    echo 'else' >> ${COMMAND_FILE}
+    echo 'elif [[ $1 == "nogui" ]]; then' >> ${COMMAND_FILE}
     echo ' sudo java -jar /usr/share/tp/TransferTool.jar $@' >> ${COMMAND_FILE}
+    echo "fi" >> ${COMMAND_FILE}
+    echo 'else' >> ${COMMAND_FILE}
+    echo ' sudo ./usr/share/tp/tp' >> ${COMMAND_FILE}
     echo "fi" >> ${COMMAND_FILE}
 }
 
@@ -77,6 +80,7 @@ function move_files() {
     sudo cp ${APPLICATION_SOURCE}/install.sh ${APPLICATION_PATH}/install.sh
     sudo cp ${APPLICATION_SOURCE}/transfertool.conf ${CONFIG_PATH}/properties/transfertool.conf
     sudo cp ${APPLICATION_SOURCE}/bkg.jpeg ${CONFIG_PATH}/properties/bkg.jpeg
+    sudo cp ${APPLICATION_SOURCE}/tp ${CONFIG_PATH}/
     yes | sudo cp ${APPLICATION_SOURCE}/tp.1.gz ${MAN_FILE}
     sudo updatedb
 }
