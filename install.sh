@@ -79,7 +79,7 @@ function move_files() {
     sudo cp ${APPLICATION_SOURCE}/install.sh ${APPLICATION_PATH}/install.sh
     sudo cp ${APPLICATION_SOURCE}/transfertool.conf ${CONFIG_PATH}/properties/transfertool.conf
     sudo cp ${APPLICATION_SOURCE}/bkg.jpeg ${CONFIG_PATH}/properties/bkg.jpeg
-    sudo cp ${APPLICATION_SOURCE}/tp ${CONFIG_PATH}/
+    sudo cp ${APPLICATION_SOURCE}/tp ${CONFIG_PATH}/tp
     yes | sudo cp ${APPLICATION_SOURCE}/tp.1.gz ${MAN_FILE}
     sudo updatedb
 }
