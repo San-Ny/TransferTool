@@ -24,7 +24,7 @@ public class Main {
 
         Properties properties;
 
-        if (args.length == 0 || args[0].equals("nogui")) {
+        if (args.length == 0 || args.length == 1 && args[0].equals("nogui")) {
             println(header);
             String line;
             while (true){
