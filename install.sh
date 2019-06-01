@@ -36,7 +36,7 @@ function create_file_command {
     echo " sudo /usr/share/tp/install.sh" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "remove" ]]; then' >> ${COMMAND_FILE}
     echo " remove_old" >> ${COMMAND_FILE}
-    echo 'elif [[ $1 == "help" ]]; then' >> ${COMMAND_FILE}
+    echo 'elif [[ $1 == "commandHelp" ]]; then' >> ${COMMAND_FILE}
     echo " help_message" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
     echo ' echo "Current installed version of TransferTool -> ${VERSION}"' >> ${COMMAND_FILE}
