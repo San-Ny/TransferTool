@@ -40,7 +40,8 @@ public class SFTPSender extends Thread {
 
         //assignation
         String user, port, host;
-        boolean debugging = properties.getProperty("Debugging").equals("ON");
+        boolean debugging = false;
+        if (properties.containsKey("Debugging") && properties.getProperty("Debugging").equals("ON")) debugging = true;
         user = properties.getProperty("user");
         port = properties.getProperty("port");
         host = properties.getProperty("host");
