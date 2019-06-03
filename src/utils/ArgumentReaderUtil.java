@@ -92,6 +92,8 @@ public class ArgumentReaderUtil {
             else if (args[a].equals("-r") || args[a].equals("--recursive"))  properties.put("Recursive", "1");
             else if (args[a].equals("-v") || args[a].equals("--verbose"))  properties.put("Verbose", "1");
             else if (args[a].equals("-i") || args[a].equals("--interactive")) properties.put("Interactive", "1");
+            else if (args[a].equals("-up") || args[a].equals("--upload")) properties.put("Upload", "1");
+            else if (args[a].equals("-gt") || args[a].equals("--get")) properties.put("Download", "1");
             else if (args[a].equals("-encrypt")) properties.put("Method", "encrypt");
             else if (args[a].equals("-decrypt")) properties.put("Method", "decrypt");
             else if (args[a].equals("-d") || args[a].equals("--debugging"))  properties.put("Debugging", "ON");

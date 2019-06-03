@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>loggin</string>
+   <string>TransferTool</string>
   </property>
   <property name="windowOpacity">
    <double>0.900000000000000</double>
@@ -106,7 +106,7 @@
      <string>Color</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>280</x>
