@@ -64,7 +64,15 @@ int Session::connect(char *password, const char* user, const char* host, const c
     }
 
     qDebug() << "connected";
+    //first sudo execution
+    this->password = password;
+
     return 0;
+}
+
+const char *Session::get_error()
+{
+    return ssh_get_error(this->session);
 }
 
 int Session::verify_knownhost()

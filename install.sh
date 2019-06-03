@@ -36,11 +36,11 @@ function create_file_command {
     echo " sudo /usr/share/tp/install.sh" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "remove" ]]; then' >> ${COMMAND_FILE}
     echo " remove_old" >> ${COMMAND_FILE}
-    echo 'elif [[ $1 == "help" ]]; then' >> ${COMMAND_FILE}
+    echo 'elif [[ $1 == "commandHelp" ]]; then' >> ${COMMAND_FILE}
     echo " help_message" >> ${COMMAND_FILE}
     echo 'elif [[ $1 == "version" ]]; then' >> ${COMMAND_FILE}
     echo ' echo "Current installed version of TransferTool -> ${VERSION}"' >> ${COMMAND_FILE}
-    echo 'elif [[ $1 == "nogui" ]]; then' >> ${COMMAND_FILE}
+    echo 'elif [[ $1 == "nogui" ]] || [[ "$#" -gt 1 ]]; then' >> ${COMMAND_FILE}
     echo ' sudo java -jar /usr/share/tp/TransferTool.jar $@' >> ${COMMAND_FILE}
     echo 'else' >> ${COMMAND_FILE}
     echo ' sudo /usr/share/tp/tp' >> ${COMMAND_FILE}
@@ -110,7 +110,7 @@ if [[ $1 == "" ]]; then
         update_permissions
     fi
 elif [[ $1 == "version" ]]; then
- echo ${VERSION}
+ echo "The current version of tp install script is: ${VERSION}"
 fi
 
 echo -e "\nUse 'tp' to use TransferTool\n"

@@ -1,7 +1,10 @@
 #ifndef LOGGIN_H
 #define LOGGIN_H
 
+#include "core.h"
+
 #include <QMainWindow>
+#include <QCloseEvent>
 
 namespace Ui {
 class loggin;
@@ -22,6 +25,7 @@ private slots:
 
 private:
     Ui::loggin *ui;
+    Core *core;
 };
 
 #endif // LOGGIN_H

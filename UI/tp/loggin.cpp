@@ -8,6 +8,8 @@
 #include <vector>
 #include <iterator>
 #include <QColorDialog>
+#include <QCloseEvent>
+#include <QMessageBox>
 
 loggin::loggin(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +29,12 @@ loggin::loggin(QWidget *parent) :
 loggin::~loggin()
 {
     delete ui;
+}
+
+void Session::closeEvent (QCloseEvent *event)
+{
+    event->accept();
+
 }
 
 template<typename Out>
@@ -75,11 +83,14 @@ void loggin::on_btn_logging_loggin_clicked()
     if(rt == 0)
     {
         qDebug() << "connection succesful";
-        return;
+        hide();
+        core = new Core(this, *session);
+        core->show();
     }
     else
     {
         qDebug() << "connection unsuccesful";
+        QMessageBox::critical(this, "Error", "The connection could not be established");
         return;
     }
 }
