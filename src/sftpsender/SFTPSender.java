@@ -1,14 +1,6 @@
 package sftpsender;
 
-import com.jcraft.jsch.*;
-import pojos.MyProgressMonitor;
-import pojos.SSH2User;
-import utils.ConsolePrinterUtil;
-
-import java.io.*;
 import java.util.Properties;
-import java.util.Vector;
-
 import static utils.ArgumentReaderUtil.*;
 
 /**
