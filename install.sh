@@ -20,12 +20,14 @@ function create_file_command {
     echo "APPLICATION_PATH=/usr/share/tp" >> ${COMMAND_FILE}
     echo "APPLICATION_SOURCE=/opt/TransferTool" >> ${COMMAND_FILE}
     echo "COMMAND_FILE=/usr/bin/tp" >> ${COMMAND_FILE}
+    echo "MAN_FILE=/usr/share/man/man1/tp.1.gz" >> ${COMMAND_FILE}
     echo '' >> ${COMMAND_FILE}
     echo "function remove_old() {" >> ${COMMAND_FILE}
     echo '    sudo rm -rf ${APPLICATION_PATH}' >> ${COMMAND_FILE}
     echo '    sudo rm -rf ${APPLICATION_SOURCE}' >> ${COMMAND_FILE}
     echo '    sudo rm -rf ${CONFIG_PATH}' >> ${COMMAND_FILE}
     echo '    sudo rm -rf ${COMMAND_FILE}' >> ${COMMAND_FILE}
+    echo '    sudo rm -rf ${MAN_FILE}' >> ${COMMAND_FILE}
     echo '}' >> ${COMMAND_FILE}
     echo '' >> ${COMMAND_FILE}
     echo "function help_message() {" >> ${COMMAND_FILE}
